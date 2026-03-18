@@ -1,33 +1,34 @@
 import streamlit as st
 
-# --- CONFIGURAÇÃO DA PÁGINA (ESTILO PROFISSIONAL) ---
+# --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(page_title="Trailer do Alan", page_icon="🍔", layout="centered")
 
-# CSS para mudar as cores do site (Tirando a branquidão)
+# CSS Corrigido (Trocando config por html)
 st.markdown("""
     <style>
     .stApp {
-        background-color: #1E1E1E; /* Fundo Grafite Escuro */
+        background-color: #1E1E1E;
         color: white;
     }
     .stButton>button {
-        background-color: #FFD700; /* Botão Dourado */
+        background-color: #FFD700;
         color: black;
         font-weight: bold;
         border-radius: 10px;
+        width: 100%;
     }
     h1, h2, h3 {
-        color: #FFA500; /* Títulos Laranja */
+        color: #FFA500;
     }
-    div[data-baseweb="select"] > div {
-        background-color: #333;
-        color: white;
+    /* Estilo para as caixas de texto e seleção */
+    input, div[data-baseweb="select"] {
+        background-color: #333 !important;
+        color: white !important;
     }
     </style>
-    """, unsafe_allow_config=True)
+    """, unsafe_allow_html=True)
 
 st.title("🍔 Trailer do Alan - Cardápio Online")
-st.write("Monte seu lanche e receba quentinho em casa!")
 
 # --- BARRA LATERAL (CADASTRO) ---
 st.sidebar.header("👤 Seus Dados")
@@ -38,7 +39,6 @@ telefone = st.sidebar.text_input("Seu WhatsApp (com DDD)")
 # --- CARDÁPIO E PREÇOS ---
 st.header("🛒 Escolha seu Lanche")
 
-# Dicionário de preços
 precos_lanches = {
     "X-Burger": 20.00,
     "X-Salada": 22.00,
@@ -49,7 +49,7 @@ precos_lanches = {
 escolha = st.selectbox("Selecione o lanche principal:", list(precos_lanches.keys()))
 valor_base = precos_lanches[escolha]
 
-st.subheader("➕ Adicionais (Turbine seu lanche)")
+st.subheader("➕ Adicionais")
 col1, col2 = st.columns(2)
 
 with col1:
@@ -77,13 +77,11 @@ if maionese:
     total += 1.50
     adicionais_lista.append("Maionese")
 
-# Mostra o valor em tempo real
 st.markdown(f"## 💰 Total do Pedido: **R$ {total:.2f}**")
 
 # --- FINALIZAÇÃO ---
 if st.button("🛒 FINALIZAR MEU PEDIDO"):
     if nome and endereco and telefone:
-        # Montagem da mensagem profissional para o WhatsApp
         str_adicionais = ", ".join(adicionais_lista) if adicionais_lista else "Nenhum"
         
         mensagem = (
@@ -99,11 +97,11 @@ if st.button("🛒 FINALIZAR MEU PEDIDO"):
             f"⏰ Aguardando confirmação..."
         )
         
-        # Link do WhatsApp (Troque pelo número real do Alan)
+        # COLOQUE O NÚMERO DO ALAN AQUI:
         numero_alan = "5511999999999" 
         link_wa = f"https://wa.me/{numero_alan}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
         
-        st.success("✅ Pedido calculado! Agora clique no botão abaixo para enviar para a cozinha:")
+        st.success("✅ Pedido organizado!")
         st.link_button("🔥 ENVIAR PARA O WHATSAPP DO ALAN", link_wa)
     else:
-        st.warning("⚠️ Por favor, preencha seus dados na barra lateral antes de finalizar!")
+        st.warning("⚠️ Preencha Nome, Endereço e Telefone na barra lateral!")
