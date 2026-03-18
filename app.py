@@ -73,6 +73,7 @@ with c2:
     add_maio = st.checkbox("Maionese Caseira (+ R$ 1,50)")
 with c3:
     add_refri = st.checkbox("Coca cola (+ R$ 5,00)")
+    add_refri = st.checkbox("Fanta (+ R$ 5,00)")
 
 # --- OBSERVAÇÕES ---
 st.subheader("📝 Observações")
