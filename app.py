@@ -13,7 +13,7 @@ telefone = st.sidebar.text_input("Telefone")
 
 # --- PEDIDO ---
 st.header("🛒 Cardápio")
-lanches = {"X-Burger (PÃO, HAMBURGUER E QUEIJO)": 20.0, "X-Salada EEEE": 22.0, "X-BACON": 25.0}
+lanches = {"X-Burger": 20.0, "X-Salada": 22.0, "X-BACON": 25.0}
 escolha = st.selectbox("Selecione o lanche:", list(lanches.keys()))
 
 st.subheader("➕ Adicionais")
