@@ -1,55 +1,43 @@
 import streamlit as st
-import pandas as pd
-import os
 
-# --- CONFIGURAÇÃO INICIAL ---
-st.title("🍔 Trailer do Alan - Sistema de Vendas")
+# Configuração da página
+st.set_page_config(page_title="Trailer do Alan", page_icon="🍔")
 
-# --- CADASTRO ---
-st.sidebar.header("👤 Dados do Cliente")
-nome = st.sidebar.text_input("Nome")
-endereco = st.sidebar.text_input("Endereço")
-telefone = st.sidebar.text_input("Telefone")
+st.title("🍔 Sistema de Pedidos - Trailer do Alan")
+st.write("Preencha os dados abaixo para enviar seu pedido direto para o nosso WhatsApp!")
 
-# --- PEDIDO ---
-st.header("🛒 Cardápio")
-lanches = {"X-Burger": 20.0, "X-Salada": 22.0, "X-BACON": 25.0}
-escolha = st.selectbox("Selecione o lanche:", list(lanches.keys()))
+# --- 1. COLETA DE DADOS ---
+# Criamos caixas de texto para o cliente digitar
+nome = st.text_input("Seu Nome:")
+endereco = st.text_input("Endereço de Entrega:")
+lanche = st.selectbox("Escolha seu Lanche:", ["X-Burger", "X-Salada", "X-Tudo", "Combo Família"])
+observacao = st.text_area("Alguma observação? (Ex: Sem cebola)")
 
-st.subheader("➕ Adicionais")
-add_bacon = st.checkbox("Bacon (+ R$ 3,00)")
-add_queijo = st.checkbox("Queijo (+ R$ 2,50)")
-add_milho = st.checkbox("milho (+R$ 1,00)")
-add_batatapalha = st.checkbox("batata palha (+R$ 1,00)")
+# --- 2. CONFIGURAÇÃO DO ALAN ---
+# Substitua pelo número real do Alan. 
+# Formato: 55 + DDD + Número (sem espaços ou traços)
+numero_whatsapp_alan = "5571992363322" 
 
-# Cálculo do Total
-total = lanches[escolha]
-if add_bacon: total += 3.0
-if add_queijo: total += 2.5
-if add_milho: total += 1.0
-if add_batatapalha: total += 1.0
-
-st.markdown(f"### 💰 Total: **R$ {total:.2f}**")
-
-# --- BOTÃO FINALIZAR E SALVAR ---
+# --- 3. A LÓGICA DO ENVIO ---
 if st.button("Finalizar Pedido"):
-    if nome and endereco and telefone:
-        # Criamos um "dicionário" com os dados que você escolheu
-        novo_pedido = {
-            "Nome": [nome],
-            "Endereço": [endereco],
-            "Telefone": [telefone],
-            "Total": [total]
-        }
-        df = pd.DataFrame(novo_pedido)
-
-        # Lógica: Se o arquivo não existe, cria com cabeçalho. Se existe, adiciona abaixo.
-        if not os.path.isfile("pedidos.csv"):
-            df.to_csv("pedidos.csv", index=False, sep=";", encoding="utf-8-sig")
-        else:
-            df.to_csv("pedidos.csv", mode='a', index=False, header=False, sep=";", encoding="utf-8-sig")
+    if nome and endereco: # Verifica se o cliente preencheu o básico
         
-        st.balloons()
-        st.success("✅ Pedido gravado na planilha com sucesso!")
+        # Aqui montamos o "corpo" da mensagem
+        # O \n serve para pular linha na mensagem do WhatsApp
+        texto = (
+            f"✅ *NOVO PEDIDO* ✅\n\n"
+            f"*Cliente:* {nome}\n"
+            f"*Lanche:* {lanche}\n"
+            f"*Endereço:* {endereco}\n"
+            f"*Obs:* {observacao}"
+        )
+        
+        # O link do WhatsApp não aceita espaços vazios, então usamos .replace(" ", "%20")
+        # Isso transforma "Oi Alan" em "Oi%20Alan", que a internet entende.
+        link_final = f"https://wa.me/{numero_whatsapp_alan}?text={texto.replace(' ', '%20')}"
+        
+        # Mostramos o botão de confirmação
+        st.success("Pedido organizado com sucesso!")
+        st.link_button("🚀 ENVIAR PARA O WHATSAPP DO ALAN", link_final)
     else:
-        st.error("⚠️ Preencha todos os campos do cadastro!")
+        st.error("Ops! Por favor, preencha seu nome e endereço.")
