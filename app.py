@@ -3,7 +3,7 @@ import streamlit as st
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(page_title="Trailer do Alan", page_icon="🍔")
 
-# CSS PERSONALIZADO (Verde Menta Moderno)
+# CSS PERSONALIZADO (Verde Menta)
 st.markdown("""
     <style>
     .stApp { background-color: #E8F5E9; color: #1B5E20; }
@@ -21,8 +21,10 @@ st.markdown("""
 
 st.title("🍔 Trailer do Alan")
 
-# --- CONFIGURAÇÃO DO CARDÁPIO ---
+# --- 1. CONFIGURAÇÃO DO CARDÁPIO ---
+# Adicionamos o "Selecione" com preço zero
 cardapio = {
+    "Selecione seu lanche...": {"preco": 0.00, "itens": "Escolha uma opção abaixo"},
     "X-Burger": {"preco": 20.00, "itens": "Pão, Carne, Queijo"},
     "X-Salada": {"preco": 22.00, "itens": "Pão, Carne, Queijo, Alface, Tomate"},
     "X-Tudo": {"preco": 28.00, "itens": "Pão, Carne, Queijo, Ovo, Bacon, Salada, Milho"},
@@ -37,8 +39,18 @@ telefone = st.sidebar.text_input("WhatsApp (com DDD)")
 
 # --- SELEÇÃO DO LANCHE ---
 st.header("🛒 Monte seu Pedido")
-opcoes = [f"{nome} - R$ {info['preco']:.2f} ({info['itens']})" for nome, info in cardapio.items()]
-escolha_formatada = st.selectbox("Selecione seu lanche principal:", opcoes)
+
+# Criamos as opções para o menu
+opcoes = []
+for n, info in cardapio.items():
+    if n == "Selecione seu lanche...":
+        opcoes.append(n)
+    else:
+        opcoes.append(f"{n} - R$ {info['preco']:.2f} ({info['itens']})")
+
+escolha_formatada = st.selectbox("Escolha seu lanche principal:", opcoes)
+
+# Lógica para identificar o lanche e o preço base
 nome_lanche = escolha_formatada.split(" - ")[0]
 valor_base = cardapio[nome_lanche]["preco"]
 
@@ -52,7 +64,7 @@ with c2:
     add_ovo = st.checkbox("Ovo (+ R$ 2,00)")
     add_maio = st.checkbox("Maionese Caseira (+ R$ 1,50)")
 
-# --- SEÇÃO DE BEBIDAS (NOVIDADE!) ---
+# --- SEÇÃO DE BEBIDAS ---
 st.subheader("🥤 Bebidas")
 bebida_opcoes = {
     "Nenhuma": 0.0,
@@ -80,7 +92,10 @@ st.markdown(f"### 💰 Total a Pagar: **R$ {total:.2f}**")
 
 # --- FINALIZAÇÃO ---
 if st.button("🚀 FINALIZAR E ENVIAR PEDIDO"):
-    if nome and endereco and telefone:
+    # Validação: Se o lanche ainda for a opção neutra, não deixa passar
+    if nome_lanche == "Selecione seu lanche...":
+        st.error("⚠️ Por favor, escolha um lanche do cardápio!")
+    elif nome and endereco and telefone:
         lista_extras = ", ".join(extras) if extras else "Nenhum"
         
         mensagem = (
@@ -96,11 +111,11 @@ if st.button("🚀 FINALIZAR E ENVIAR PEDIDO"):
             f"💵 *VALOR TOTAL:* R$ {total:.2f}"
         )
         
-        # COLOQUE O NÚMERO DO ALAN AQUI:
+        # NÚMERO DO ALAN (Ajuste aqui)
         numero_alan = "5511999999999" 
         link_wa = f"https://wa.me/{numero_alan}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
         
-        st.success("Tudo pronto!")
+        st.success("Tudo pronto! Clique abaixo:")
         st.link_button("✅ ENVIAR PARA O WHATSAPP DO ALAN", link_wa)
     else:
         st.error("⚠️ Preencha Nome, Endereço e Telefone na barra lateral!")
