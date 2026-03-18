@@ -26,9 +26,8 @@ cardapio = {
     "Selecione seu lanche...": {"preco": 0.00, "itens": "Escolha uma opção abaixo"},
     "X-Burger": {"preco": 20.00, "itens": "Pão, Carne, Queijo"},
     "X-Salada": {"preco": 22.00, "itens": "Pão, Carne, Queijo, Alface, Tomate"},
-    "X-Egg-Bacon": {"preço": 30.00, "itens: "Pão, Carne, Queijo, Ovo e Bacon"},
     "X-Tudo": {"preco": 28.00, "itens": "Pão, Carne, Queijo, Ovo, Bacon, Salada, Milho"},
-    "Combo Alan": {"preco": 35.00, "itens": "X-Burguer + Batata M + Refri Lata"}
+    "Combo Alan": {"preco": 35.00, "itens": "Lanche + Batata M + Refri Lata"}
 }
 
 # --- BARRA LATERAL (CLIENTE) ---
