@@ -7,7 +7,7 @@ from datetime import datetime
 st.set_page_config(page_title="Trailer do Alan", page_icon="🍔")
 
 # ⚠️ COLOQUE O LINK DA SUA PLANILHA AQUI:
-url_planilha = "COLE_AQUI_O_LINK_DA_SUA_PLANILHA"
+url_planilha = "https://docs.google.com/spreadsheets/d/1NOZvZcbmx0BgXdsXoeDGkonwusjJaqNFDnN86LGQWfw/edit?gid=0#gid=0"
 
 # Conectando com o Google Sheets
 conn = st.connection("gsheets", type=GSheetsConnection)
