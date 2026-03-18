@@ -1,107 +1,114 @@
 import streamlit as st
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
-st.set_page_config(page_title="Trailer do Alan", page_icon="🍔", layout="centered")
+st.set_page_config(page_title="Trailer do Alan", page_icon="🍔")
 
-# CSS Corrigido (Trocando config por html)
+# CSS PERSONALIZADO (Verde Claro e Moderno)
 st.markdown("""
     <style>
     .stApp {
-        background-color: #1E1E1E;
-        color: white;
+        background-color: #E8F5E9; /* Verde bem clarinho */
+        color: #1B5E20; /* Texto Verde Escuro */
     }
     .stButton>button {
-        background-color: #FFD700;
-        color: red;
-        font-weight: bold;
-        border-radius: 10px;
+        background-color: #2E7D32; /* Botão Verde Forte */
+        color: white;
+        border-radius: 8px;
+        height: 3em;
         width: 100%;
+        font-weight: bold;
     }
-    h1, h2, h3 {
-        color: #FFA500;
+    /* Estilo para as caixas de seleção e texto */
+    .stCheckbox, .stTextInput, .stSelectbox {
+        background-color: #FFFFFF;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #C8E6C9;
+        margin-bottom: 10px;
     }
-    /* Estilo para as caixas de texto e seleção */
-    input, div[data-baseweb="select"] {
-        background-color: #333 !important;
-        color: white !important;
+    h1, h2 {
+        color: #1B5E20;
+        text-align: center;
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🍔 Trailer do Alan - Cardápio Online")
+st.title("🍔 Trailer do Alan")
+st.write("---")
 
-# --- BARRA LATERAL (CADASTRO) ---
-st.sidebar.header("👤 Seus Dados")
-nome = st.sidebar.text_input("Nome completo")
-endereco = st.sidebar.text_input("Endereço de entrega")
-telefone = st.sidebar.text_input("Seu WhatsApp (com DDD)")
-
-# --- CARDÁPIO E PREÇOS ---
-st.header("🛒 Escolha seu Lanche")
-
-precos_lanches = {
-    "X-Burger": 20.00,
-    "X-Salada": 22.00,
-    "X-Tudo": 28.00,
-    "Combo Alan (Lanche + Batata + Refri)": 35.00
+# --- 1. CONFIGURAÇÃO DO CARDÁPIO (Fácil de mudar aqui!) ---
+# Aqui você muda o nome, o preço e o que vem dentro
+cardapio = {
+    "X-Burger": {"preco": 20.00, "itens": "Pão, Carne, Queijo"},
+    "X-Salada": {"preco": 22.00, "itens": "Pão, Carne, Queijo, Alface, Tomate"},
+    "X-Tudo": {"preco": 28.00, "itens": "Pão, Carne, Queijo, Ovo, Bacon, Salada, Milho"},
+    "Combo Alan": {"preco": 35.00, "itens": "Lanche + Batata M + Refri Lata"}
 }
 
-escolha = st.selectbox("Selecione o lanche principal:", list(precos_lanches.keys()))
-valor_base = precos_lanches[escolha]
+# --- BARRA LATERAL (CLIENTE) ---
+st.sidebar.header("📋 Dados de Entrega")
+nome = st.sidebar.text_input("Seu Nome")
+endereco = st.sidebar.text_input("Endereço Completo")
+telefone = st.sidebar.text_input("WhatsApp (com DDD)")
 
-st.subheader("➕ Adicionais")
-col1, col2 = st.columns(2)
+# --- SELEÇÃO DO LANCHE ---
+st.header("🛒 Monte seu Pedido")
 
-with col1:
-    bacon = st.checkbox("Bacon Extra (R$ 4,00)")
-    queijo = st.checkbox("Queijo Extra (R$ 3,00)")
+# Criamos a lista de opções com Nome + Preço + Ingredientes
+opcoes = [f"{nome} - R$ {info['preco']:.2f} ({info['itens']})" for nome, info in cardapio.items()]
+escolha_formatada = st.selectbox("Selecione seu lanche principal:", opcoes)
 
-with col2:
-    ovo = st.checkbox("Ovo (R$ 2,00)")
-    maionese = st.checkbox("Maionese Caseira (R$ 1,50)")
+# Extraímos o nome do lanche e o preço da escolha feita
+nome_lanche = escolha_formatada.split(" - ")[0]
+valor_base = cardapio[nome_lanche]["preco"]
 
-# --- LÓGICA DE CÁLCULO ---
+# --- ADICIONAIS ---
+st.subheader("➕ Adicionais Extras")
+c1, c2 = st.columns(2)
+with c1:
+    add_bacon = st.checkbox("Bacon Extra (+ R$ 4,00)")
+    add_queijo = st.checkbox("Queijo Extra (+ R$ 3,00)")
+with c2:
+    add_ovo = st.checkbox("Ovo (+ R$ 2,00)")
+    add_maio = st.checkbox("Maionese Caseira (+ R$ 1,50)")
+
+# --- OBSERVAÇÕES ---
+st.subheader("📝 Observações")
+obs = st.text_area("Ex: Tirar cebola, ponto da carne, trocar refri, etc.")
+
+# --- CÁLCULO TOTAL ---
 total = valor_base
-adicionais_lista = []
+extras = []
+if add_bacon: total += 4.0; extras.append("Bacon")
+if add_queijo: total += 3.0; extras.append("Queijo")
+if add_ovo: total += 2.0; extras.append("Ovo")
+if add_maio: total += 1.5; extras.append("Maionese")
 
-if bacon: 
-    total += 4.00
-    adicionais_lista.append("Bacon")
-if queijo: 
-    total += 3.00
-    adicionais_lista.append("Queijo")
-if ovo: 
-    total += 2.00
-    adicionais_lista.append("Ovo")
-if maionese: 
-    total += 1.50
-    adicionais_lista.append("Maionese")
+st.write("---")
+st.markdown(f"### 💰 Total a Pagar: **R$ {total:.2f}**")
 
-st.markdown(f"## 💰 Total do Pedido: **R$ {total:.2f}**")
-
-# --- FINALIZAÇÃO ---
-if st.button("🛒 FINALIZAR MEU PEDIDO"):
+# --- BOTÃO FINAL ---
+if st.button("🚀 FINALIZAR E ENVIAR PEDIDO"):
     if nome and endereco and telefone:
-        str_adicionais = ", ".join(adicionais_lista) if adicionais_lista else "Nenhum"
-        
+        # Montagem da mensagem
+        lista_extras = ", ".join(extras) if extras else "Nenhum"
         mensagem = (
-            f"🍔 *NOVO PEDIDO DO TRAILER* 🍔\n\n"
-            f"👤 *Cliente:* {nome}\n"
-            f"📍 *Endereço:* {endereco}\n"
-            f"📱 *Tel:* {telefone}\n"
+            f"🍔 *PEDIDO DO TRAILER* 🍔\n\n"
+            f"*Cliente:* {nome}\n"
+            f"*Endereço:* {endereco}\n"
             f"--------------------------\n"
-            f"🥪 *Lanche:* {escolha}\n"
-            f"🥓 *Adicionais:* {str_adicionais}\n"
-            f"💵 *VALOR TOTAL:* R$ {total:.2f}\n"
+            f"*Lanche:* {nome_lanche}\n"
+            f"*Adicionais:* {lista_extras}\n"
+            f"*Observações:* {obs if obs else 'Nenhuma'}\n"
             f"--------------------------\n"
-            f"⏰ Aguardando confirmação..."
+            f"💵 *VALOR TOTAL:* R$ {total:.2f}"
         )
         
-        # COLOQUE O NÚMERO DO ALAN AQUI:
+        # NÚMERO DO ALAN (Ajuste aqui)
         numero_alan = "5511999999999" 
         link_wa = f"https://wa.me/{numero_alan}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
         
-        st.success("✅ Pedido organizado!")
-        st.link_button("🔥 ENVIAR PARA O WHATSAPP DO ALAN", link_wa)
+        st.success("Pedido pronto! Clique abaixo para abrir seu WhatsApp.")
+        st.link_button("✅ ENVIAR PARA O ALAN", link_wa)
     else:
-        st.warning("⚠️ Preencha Nome, Endereço e Telefone na barra lateral!")
+        st.error("⚠️ Preencha Nome, Endereço e Telefone na barra lateral!")
