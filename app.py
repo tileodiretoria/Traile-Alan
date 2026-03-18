@@ -1,43 +1,109 @@
 import streamlit as st
 
-# Configuração da página
-st.set_page_config(page_title="Trailer do Alan", page_icon="🍔")
+# --- CONFIGURAÇÃO DA PÁGINA (ESTILO PROFISSIONAL) ---
+st.set_page_config(page_title="Trailer do Alan", page_icon="🍔", layout="centered")
 
-st.title("🍔 Sistema de Pedidos - Trailer do Alan")
-st.write("Preencha os dados abaixo para enviar seu pedido direto para o nosso WhatsApp!")
+# CSS para mudar as cores do site (Tirando a branquidão)
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #1E1E1E; /* Fundo Grafite Escuro */
+        color: white;
+    }
+    .stButton>button {
+        background-color: #FFD700; /* Botão Dourado */
+        color: black;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+    h1, h2, h3 {
+        color: #FFA500; /* Títulos Laranja */
+    }
+    div[data-baseweb="select"] > div {
+        background-color: #333;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_config=True)
 
-# --- 1. COLETA DE DADOS ---
-# Criamos caixas de texto para o cliente digitar
-nome = st.text_input("Seu Nome:")
-endereco = st.text_input("Endereço de Entrega:")
-lanche = st.selectbox("Escolha seu Lanche:", ["X-Burger", "X-Salada", "X-Tudo", "Combo Família"])
-observacao = st.text_area("Alguma observação? (Ex: Sem cebola)")
+st.title("🍔 Trailer do Alan - Cardápio Online")
+st.write("Monte seu lanche e receba quentinho em casa!")
 
-# --- 2. CONFIGURAÇÃO DO ALAN ---
-# Substitua pelo número real do Alan. 
-# Formato: 55 + DDD + Número (sem espaços ou traços)
-numero_whatsapp_alan = "5571992363322" 
+# --- BARRA LATERAL (CADASTRO) ---
+st.sidebar.header("👤 Seus Dados")
+nome = st.sidebar.text_input("Nome completo")
+endereco = st.sidebar.text_input("Endereço de entrega")
+telefone = st.sidebar.text_input("Seu WhatsApp (com DDD)")
 
-# --- 3. A LÓGICA DO ENVIO ---
-if st.button("Finalizar Pedido"):
-    if nome and endereco: # Verifica se o cliente preencheu o básico
+# --- CARDÁPIO E PREÇOS ---
+st.header("🛒 Escolha seu Lanche")
+
+# Dicionário de preços
+precos_lanches = {
+    "X-Burger": 20.00,
+    "X-Salada": 22.00,
+    "X-Tudo": 28.00,
+    "Combo Alan (Lanche + Batata + Refri)": 35.00
+}
+
+escolha = st.selectbox("Selecione o lanche principal:", list(precos_lanches.keys()))
+valor_base = precos_lanches[escolha]
+
+st.subheader("➕ Adicionais (Turbine seu lanche)")
+col1, col2 = st.columns(2)
+
+with col1:
+    bacon = st.checkbox("Bacon Extra (R$ 4,00)")
+    queijo = st.checkbox("Queijo Extra (R$ 3,00)")
+
+with col2:
+    ovo = st.checkbox("Ovo (R$ 2,00)")
+    maionese = st.checkbox("Maionese Caseira (R$ 1,50)")
+
+# --- LÓGICA DE CÁLCULO ---
+total = valor_base
+adicionais_lista = []
+
+if bacon: 
+    total += 4.00
+    adicionais_lista.append("Bacon")
+if queijo: 
+    total += 3.00
+    adicionais_lista.append("Queijo")
+if ovo: 
+    total += 2.00
+    adicionais_lista.append("Ovo")
+if maionese: 
+    total += 1.50
+    adicionais_lista.append("Maionese")
+
+# Mostra o valor em tempo real
+st.markdown(f"## 💰 Total do Pedido: **R$ {total:.2f}**")
+
+# --- FINALIZAÇÃO ---
+if st.button("🛒 FINALIZAR MEU PEDIDO"):
+    if nome and endereco and telefone:
+        # Montagem da mensagem profissional para o WhatsApp
+        str_adicionais = ", ".join(adicionais_lista) if adicionais_lista else "Nenhum"
         
-        # Aqui montamos o "corpo" da mensagem
-        # O \n serve para pular linha na mensagem do WhatsApp
-        texto = (
-            f"✅ *NOVO PEDIDO* ✅\n\n"
-            f"*Cliente:* {nome}\n"
-            f"*Lanche:* {lanche}\n"
-            f"*Endereço:* {endereco}\n"
-            f"*Obs:* {observacao}"
+        mensagem = (
+            f"🍔 *NOVO PEDIDO DO TRAILER* 🍔\n\n"
+            f"👤 *Cliente:* {nome}\n"
+            f"📍 *Endereço:* {endereco}\n"
+            f"📱 *Tel:* {telefone}\n"
+            f"--------------------------\n"
+            f"🥪 *Lanche:* {escolha}\n"
+            f"🥓 *Adicionais:* {str_adicionais}\n"
+            f"💵 *VALOR TOTAL:* R$ {total:.2f}\n"
+            f"--------------------------\n"
+            f"⏰ Aguardando confirmação..."
         )
         
-        # O link do WhatsApp não aceita espaços vazios, então usamos .replace(" ", "%20")
-        # Isso transforma "Oi Alan" em "Oi%20Alan", que a internet entende.
-        link_final = f"https://wa.me/{numero_whatsapp_alan}?text={texto.replace(' ', '%20')}"
+        # Link do WhatsApp (Troque pelo número real do Alan)
+        numero_alan = "5511999999999" 
+        link_wa = f"https://wa.me/{numero_alan}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
         
-        # Mostramos o botão de confirmação
-        st.success("Pedido organizado com sucesso!")
-        st.link_button("🚀 ENVIAR PARA O WHATSAPP DO ALAN", link_final)
+        st.success("✅ Pedido calculado! Agora clique no botão abaixo para enviar para a cozinha:")
+        st.link_button("🔥 ENVIAR PARA O WHATSAPP DO ALAN", link_wa)
     else:
-        st.error("Ops! Por favor, preencha seu nome e endereço.")
+        st.warning("⚠️ Por favor, preencha seus dados na barra lateral antes de finalizar!")
