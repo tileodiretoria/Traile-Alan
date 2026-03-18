@@ -86,6 +86,8 @@ if add_bacon: total += 4.0; extras.append("Bacon")
 if add_queijo: total += 3.0; extras.append("Queijo")
 if add_ovo: total += 2.0; extras.append("Ovo")
 if add_maio: total += 1.5; extras.append("Maionese")
+if add_refri: total += 5.00; extras.append("Refri lata")
+if add_refri: total += 5.00; extras.append("Refri lata")      
 
 st.write("---")
 st.markdown(f"### 💰 Total a Pagar: **R$ {total:.2f}**")
