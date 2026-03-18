@@ -42,7 +42,7 @@ cardapio = {
     "X-Burger": {"preco": 20.00, "itens": "Pão, Carne, Queijo"},
     "X-Salada": {"preco": 22.00, "itens": "Pão, Carne, Queijo, Alface, Tomate"},
     "X-Tudo": {"preco": 28.00, "itens": "Pão, Carne, Queijo, Ovo, Bacon, Salada, Milho"},
-    "Combo Alan": {"preco": 35.00, "itens": "Lanche + Batata M + Refri Lata"}
+    "Combo Alan": {"preco": 35.00, "itens": "X-Burger + Batata M + Refri Lata"}
 }
 
 # --- BARRA LATERAL (CLIENTE) ---
@@ -71,6 +71,8 @@ with c1:
 with c2:
     add_ovo = st.checkbox("Ovo (+ R$ 2,00)")
     add_maio = st.checkbox("Maionese Caseira (+ R$ 1,50)")
+with c3:
+    add_refri = st.checkbox("Coca cola (+ R$ 5,00)")
 
 # --- OBSERVAÇÕES ---
 st.subheader("📝 Observações")
