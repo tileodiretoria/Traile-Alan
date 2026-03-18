@@ -117,7 +117,7 @@ if st.button("🚀 FINALIZAR E ENVIAR PEDIDO"):
             f"💵 *VALOR TOTAL:* R$ {total:.2f}"
         )
         
-        # Coloque o número do Alan aqui (ex: 5511999999999)
+        # Coloque o número do Alan aqui (ex: 5571992363322)
         numero_alan = "5511999999999" 
         link_wa = f"https://wa.me/{numero_alan}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
         
