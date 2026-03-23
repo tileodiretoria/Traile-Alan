@@ -34,13 +34,13 @@ def adicionar(nome, preco, ingredientes):
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
 
 with tab1:
-    # DEFINIÇÃO DAS CATEGORIAS
-    # Para Carne, usamos apenas "Carne". Para Frango, "Hambúrguer de Frango" como você pediu.
+    # DEFINIÇÃO DAS CATEGORIAS (Adicionada a 5ª opção: Filé de Frango)
     categorias = [
         {"nome": "Hambúrguer de Carne", "tipo": "Carne", "pb": 10},
         {"nome": "Hambúrguer de Frango", "tipo": "Hambúrguer de Frango", "pb": 12},
         {"nome": "Hambúrguer de Lombo", "tipo": "Lombo", "pb": 14},
         {"nome": "Hambúrguer de Picanha", "tipo": "Picanha", "pb": 18},
+        {"nome": "Filé de Frango", "tipo": "Filé de Frango", "pb": 15}, # NOVO
     ]
 
     for cat in categorias:
@@ -49,7 +49,7 @@ with tab1:
             pb = cat['pb']
             col1, col2 = st.columns(2)
             
-            # Lista de lanches com descrições corrigidas
+            # Variações padrão para todas as categorias
             lanches = [
                 {"n": f"{tipo}", "p": pb, "ing": f"Pão, {tipo}, Alface e Tomate"},
                 {"n": f"X-Burger {tipo}", "p": pb+5, "ing": f"Pão, {tipo}, Queijo, Alface e Tomate"},
@@ -71,7 +71,7 @@ with tab1:
     if st.button(f"👑 X-TUDO ESPECIAL ALAN\nR$ 45,00\n({xtudo_ing})"):
         adicionar("X-Tudo Especial Alan", 45.00, xtudo_ing)
 
-# --- ADICIONAIS, BEBIDAS E FINALIZAÇÃO (IGUAL AO SEU ORIGINAL) ---
+# --- ADICIONAIS, BEBIDAS E FINALIZAÇÃO ---
 with tab2:
     adics = {"Queijo": 3, "Presunto": 3, "Ovo": 3, "Bacon": 5, "Milho": 2, "Batata": 4, "Catupiry": 5}
     cols = st.columns(2)
@@ -93,7 +93,6 @@ with tab4:
 
 with tab5:
     nome = st.text_input("Seu Nome:")
-    tel = st.text_input("Telefone:")
     end = st.text_input("Endereço Completo:")
     obs = st.text_area("Observações (Ex: Sem cebola):")
 
@@ -103,7 +102,6 @@ with tab5:
         if nome and end and st.session_state.carrinho:
             itens_lista = "\n".join([f"* {i['item']} (Ingredientes: {i['ing']})" for i in st.session_state.carrinho])
             mensagem = f"*PEDIDO - TRAILER DO ALAN*\n\n*Cliente:* {nome}\n*Endereço:* {end}\n\n*ITENS:*\n{itens_lista}\n\n*OBS:* {obs}\n\n*TOTAL: R$ {total_final:.2f}*"
-            # Substitua o número abaixo pelo do Alan
             link_wa = f"https://wa.me/5511999999999?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
             st.link_button("Abrir WhatsApp ✅", link_wa)
         else:
