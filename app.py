@@ -111,4 +111,37 @@ with tab5:
     st.warning("📝 Caso não queira algum item do lanche, coloque aqui. Ex: Não colocar alface e tomate")
     obs = st.text_area("Suas Observações:")
 
-    total_final = sum(
+    total_final = sum(item['preco'] for item in st.session_state.carrinho)
+    
+    if st.button("🟢 ENVIAR PEDIDO PELO WHATSAPP"):
+        if nome and end and st.session_state.carrinho:
+            # Montagem da Mensagem
+            itens_lista = "\n".join([f"- {i['item']}: R$ {i['preco']:.2f}" for i in st.session_state.carrinho])
+            mensagem = f"*PEDIDO - TRAILER DO ALAN*\n\n" \
+                       f"*Cliente:* {nome}\n" \
+                       f"*Endereço:* {end}\n" \
+                       f"*Complemento:* {comp}\n\n" \
+                       f"*ITENS:*\n{itens_lista}\n\n" \
+                       f"*OBS:* {obs}\n" \
+                       f"---" \
+                       f"\n*TOTAL: R$ {total_final:.2f}*"
+            
+            # Link do WhatsApp (Troque pelo número do Alan)
+            numero_alan = "5511999999999" 
+            link_wa = f"https://wa.me/{numero_alan}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
+            
+            st.success("Tudo pronto! Clique no botão abaixo para abrir seu WhatsApp.")
+            st.link_button("Ir para o WhatsApp ✅", link_wa)
+        else:
+            st.error("Por favor, preencha os dados e escolha pelo menos um item!")
+
+# --- RODAPÉ FIXO DO TOTAL ---
+if st.session_state.carrinho:
+    total_float = sum(item['preco'] for item in st.session_state.carrinho)
+    st.markdown(f"""
+        <div class="footer-total">
+            <span style="color:#0077b6; font-size:20px; font-weight:bold;">
+                🛒 Total do Pedido: R$ {total_float:.2f}
+            </span>
+        </div>
+    """, unsafe_allow_html=True)
