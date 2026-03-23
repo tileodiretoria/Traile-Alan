@@ -36,7 +36,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 
 with tab1:
     # DEFINIÇÃO DAS CATEGORIAS (Adicionada a 5ª opção: Filé de Frango)
     categorias = [
-        {"nome": "Hambúrguer de Carne", "tipo": "Carne", "pb": 10},
+        {"nome": "Hambúrguer Simples", "tipo": "Carne", "pb": 10},
         {"nome": "Hambúrguer de Frango", "tipo": "Hambúrguer de Frango", "pb": 12},
         {"nome": "Hambúrguer de Lombo", "tipo": "Lombo", "pb": 14},
         {"nome": "Hambúrguer de Picanha", "tipo": "Picanha", "pb": 18},
