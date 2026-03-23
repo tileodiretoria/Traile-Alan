@@ -1,133 +1,114 @@
 import streamlit as st
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
-st.set_page_config(page_title="Trailer do Alan", page_icon="🍔")
+st.set_page_config(page_title="Trailer do Alan - Cardápio", page_icon="🍔", layout="centered")
 
-# CSS PERSONALIZADO (Verde Menta)
+# --- ESTILO VISUAL (AZUL CLARO E BRANCO NEVE) ---
 st.markdown("""
     <style>
-    .stApp { background-color: #E8F5E9; color: #1B5E20; }
+    .stApp { background-color: #F0F8FF; } /* Azul Claro / Alice Blue */
+    .main-title { color: #0077b6; font-size: 38px; font-weight: bold; text-align: center; margin-bottom: 5px; }
+    .sub-title { color: #0077b6; font-size: 18px; text-align: center; margin-bottom: 30px; }
     .stButton>button { 
-        background-color: #2E7D32; color: white; 
-        border-radius: 8px; width: 100%; font-weight: bold; 
+        background-color: #00b4d8; color: white; width: 100%; border-radius: 12px; 
+        height: 50px; font-weight: bold; border: none; transition: 0.3s;
     }
-    .stCheckbox, .stTextInput, .stSelectbox {
-        background-color: #FFFFFF; padding: 10px; 
-        border-radius: 10px; border: 1px solid #C8E6C9;
+    .stButton>button:hover { background-color: #0077b6; border: 1px solid white; }
+    .footer-total { 
+        position: fixed; bottom: 0; left: 0; width: 100%; background-color: white; 
+        padding: 15px; text-align: center; border-top: 3px solid #00b4d8; z-index: 100;
     }
-    h1, h2, h3 { color: #1B5E20; text-align: center; }
+    .card-lanche { background-color: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid #00b4d8; }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🍔 Trailer do Alan")
+# --- CABEÇALHO ---
+st.markdown('<p class="main-title">🍔 Trailer do Alan</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">O melhor hambúrguer da região!</p>', unsafe_allow_html=True)
 
-# --- 1. CONFIGURAÇÃO DO CARDÁPIO ---
-cardapio = {
-    "Selecione seu lanche...": {"preco": 0.00, "itens": "Escolha uma opção abaixo"},
-    "X-Burger": {"preco": 20.00, "itens": "Pão, Carne, Queijo"},
-    "X-Salada": {"preco": 22.00, "itens": "Pão, Carne, Queijo, Alface, Tomate"},
-    "X-Tudo": {"preco": 28.00, "itens": "Pão, Carne, Queijo, Ovo, Bacon, Salada, Milho"},
-    "Combo Alan": {"preco": 35.00, "itens": "X-Burguer + Batata M + Refri Lata"}
-}
+# Banner Principal (Imagem Apetitosa)
+st.image("https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?q=80&w=1000&auto=format&fit=crop", use_container_width=True)
 
-# --- BARRA LATERAL (CLIENTE) ---
-st.sidebar.header("📋 Dados de Entrega")
-nome = st.sidebar.text_input("Seu Nome")
-endereco = st.sidebar.text_input("Endereço Completo")
-telefone = st.sidebar.text_input("WhatsApp (com DDD)")
+# --- SISTEMA DE CARRINHO (SESSION STATE) ---
+if 'carrinho' not in st.session_state:
+    st.session_state.carrinho = []
 
-# --- SELEÇÃO DO LANCHE ---
-st.header("🛒 Monte seu Pedido")
+def adicionar_ao_carrinho(nome, preco):
+    st.session_state.carrinho.append({"item": nome, "preco": preco})
+    st.toast(f"✅ {nome} adicionado!")
 
-opcoes_lanche = []
-for n, info in cardapio.items():
-    if n == "Selecione seu lanche...":
-        opcoes_lanche.append(n)
-    else:
-        opcoes_lanche.append(f"{n} - R$ {info['preco']:.2f} ({info['itens']})")
+# --- ABAS DE NAVEGAÇÃO ---
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
 
-escolha_lanche_formatada = st.selectbox("Escolha seu lanche principal:", opcoes_lanche)
-nome_lanche = escolha_lanche_formatada.split(" - ")[0]
-valor_base = cardapio[nome_lanche]["preco"]
-
-# --- ADICIONAIS ---
-st.subheader("➕ Adicionais Extras")
-c1, c2, c3, c4 = st.columns(4)
-with c1:
-    add_bacon = st.checkbox("Bacon Extra (+ R$ 4,00)")
-    add_queijo = st.checkbox("Queijo Extra (+ R$ 3,00)")
-with c2:
-    add_ovo = st.checkbox("Ovo (+ R$ 2,00)")
-    add_maio = st.checkbox("Maionese Caseira (+ R$ 1,50)")
-with c3:
-    add_Presunto = st.checkbox("Presunto (+ R$ 2,00)")
-    add_milho = st.checkbox("Milho (+ R$ 0,0)")
-with c4:
-    add_Batata = st.checkbox("Batata Palha (+ R$ 0,00)")
-    add_catupiry = st.checkbox("Catupiryo (+ R$ 3,00)")
+# --- ABA 1: LANCHES ---
+with tab1:
+    st.info("🍅 Todos os lanches acompanham Alface e Tomate por padrão.")
     
-# --- SEÇÃO DE BEBIDAS (COM PREÇOS VISÍVEIS!) ---
-st.subheader("🥤 Bebidas")
-bebidas = {
-    "Nenhuma": 0.0,
-    "Refri em Lata": 5.0,
-    "Refri 1 Litro": 10.0,
-    "Refri 2 Litros": 15.0
-}
+    tipos = ["Simples", "Frango", "Lombo", "Picanha"]
+    precos_base = {"Simples": 10, "Frango": 12, "Lombo": 14, "Picanha": 18}
 
-# Criamos a lista de texto para o cliente ver o preço
-opcoes_bebida = []
-for b, p in bebidas.items():
-    if b == "Nenhuma":
-        opcoes_bebida.append(b)
-    else:
-        opcoes_bebida.append(f"{b} - R$ {p:.2f}")
+    for t in tipos:
+        with st.expander(f"✨ Opções de Hambúrguer de {t}"):
+            # Variações solicitadas
+            p = precos_base[t]
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button(f"X-{t} (Queijo)\nR$ {p+5:.2f}", key=f"x{t}"):
+                    adicionar_ao_carrinho(f"X-{t} (Queijo)", p+5)
+                
+                if st.button(f"X-Egg {t}\nR$ {p+8:.2f}", key=f"egg{t}"):
+                    adicionar_ao_carrinho(f"X-Egg {t}", p+8)
+            
+            with col2:
+                if st.button(f"X-Bacon {t}\nR$ {p+10:.2f}", key=f"bac{t}"):
+                    adicionar_ao_carrinho(f"X-Bacon {t}", p+10)
+                
+                if st.button(f"X-Egg Bacon {t}\nR$ {p+15:.2f}", key=f"eggbac{t}"):
+                    adicionar_ao_carrinho(f"X-Egg Bacon {t}", p+15)
 
-escolha_bebida_formatada = st.selectbox("Deseja adicionar refrigerante?", opcoes_bebida)
-# Pegamos apenas o nome da bebida para buscar o preço no dicionário
-nome_bebida = escolha_bebida_formatada.split(" - ")[0]
-valor_bebida = bebidas[nome_bebida]
+    st.markdown("---")
+    if st.button("👑 X-TUDO DO ALAN (Todos os Bifes + Todos Ingredientes) - R$ 45,00"):
+        adicionar_ao_carrinho("X-Tudo Especial", 45.00)
 
-# --- OBSERVAÇÕES ---
-st.subheader("📝 Observações")
-obs = st.text_area("Ex: Ponto da carne, retirar ingrediente, etc.")
+# --- ABA 2: ADICIONAIS ---
+with tab2:
+    st.subheader("➕ Adicione um toque extra")
+    adics = {
+        "Queijo": 3, "Presunto": 3, "Ovo": 3, "Bacon": 5, "Milho": 2, 
+        "Batata": 4, "Catupiry": 5, "Hamb. Simples": 7, "Hamb. Picanha": 12
+    }
+    cols = st.columns(2)
+    for i, (item, preco) in enumerate(adics.items()):
+        if cols[i % 2].button(f"{item} (+ R$ {preco:.2f})", key=f"add{item}"):
+            adicionar_ao_carrinho(f"Adicional {item}", preco)
 
-# --- LÓGICA DE CÁLCULO TOTAL ---
-total = valor_base + valor_bebida
-extras = []
-if add_bacon: total += 4.0; extras.append("Bacon")
-if add_queijo: total += 3.0; extras.append("Queijo")
-if add_ovo: total += 2.0; extras.append("Ovo")
-if add_maio: total += 1.5; extras.append("Maionese")
+# --- ABA 3: BEBIDAS ---
+with tab3:
+    st.subheader("🥤 Refrigerantes")
+    refris = {"Lata": 5, "600ml": 8, "1 Litro": 10, "2 Litros": 15}
+    for tam, preco in refris.items():
+        if st.button(f"Refri {tam} - R$ {preco:.2f}"):
+            adicionar_ao_carrinho(f"Refri {tam}", preco)
 
-st.write("---")
-st.markdown(f"### 💰 Total a Pagar: **R$ {total:.2f}**")
+# --- ABA 4: SOBREMESAS ---
+with tab4:
+    st.subheader("🍰 Sobremesas")
+    doces = {"Brigadeiro": 4, "Beijinho": 4, "Doce Amendoim": 3, "Doce Morango": 5}
+    for doce, preco in doces.items():
+        if st.button(f"{doce} - R$ {preco:.2f}"):
+            adicionar_ao_carrinho(doce, preco)
 
-# --- FINALIZAÇÃO ---
-if st.button("🚀 FINALIZAR E ENVIAR PEDIDO"):
-    if nome_lanche == "Selecione seu lanche...":
-        st.error("⚠️ Por favor, escolha um lanche do cardápio!")
-    elif nome and endereco and telefone:
-        lista_extras = ", ".join(extras) if extras else "Nenhum"
-        
-        mensagem = (
-            f"🍔 *PEDIDO DO TRAILER* 🍔\n\n"
-            f"*Cliente:* {nome}\n"
-            f"*Endereço:* {endereco}\n"
-            f"--------------------------\n"
-            f"*Lanche:* {nome_lanche}\n"
-            f"*Adicionais:* {lista_extras}\n"
-            f"*Bebida:* {nome_bebida}\n"
-            f"*Observações:* {obs if obs else 'Nenhuma'}\n"
-            f"--------------------------\n"
-            f"💵 *VALOR TOTAL:* R$ {total:.2f}"
-        )
-        
-        # Coloque o número do Alan aqui (ex: 5571992363322)
-        numero_alan = "5571992363322" 
-        link_wa = f"https://wa.me/{numero_alan}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
-        
-        st.success("Tudo pronto! Clique no botão abaixo:")
-        st.link_button("✅ ENVIAR PARA O WHATSAPP DO ALAN", link_wa)
-    else:
-        st.error("⚠️ Preencha Nome, Endereço e Telefone na barra lateral!")
+# --- ABA 5: FINALIZAR ---
+with tab5:
+    st.subheader("👤 Identificação e Entrega")
+    nome = st.text_input("Seu Nome:")
+    tel = st.text_input("Telefone:")
+    end = st.text_input("Endereço Completo:")
+    comp = st.text_input("Complemento (Apto, bloco, casa):")
+    
+    st.write("---")
+    st.warning("📝 Caso não queira algum item do lanche, coloque aqui. Ex: Não colocar alface e tomate")
+    obs = st.text_area("Suas Observações:")
+
+    total_final = sum(
