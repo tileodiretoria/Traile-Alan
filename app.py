@@ -52,14 +52,20 @@ valor_base = cardapio[nome_lanche]["preco"]
 
 # --- ADICIONAIS ---
 st.subheader("➕ Adicionais Extras")
-c1, c2 = st.columns(2)
+c1, c2, c3, c4 = st.columns(4)
 with c1:
     add_bacon = st.checkbox("Bacon Extra (+ R$ 4,00)")
     add_queijo = st.checkbox("Queijo Extra (+ R$ 3,00)")
 with c2:
     add_ovo = st.checkbox("Ovo (+ R$ 2,00)")
     add_maio = st.checkbox("Maionese Caseira (+ R$ 1,50)")
-
+with c3:
+    add_Presunto = st.checkbox("Presunto (+ R$ 2,00)")
+    add_milho = st.checkbox("Milho (+ R$ 0,0)")
+with c4:
+    add_Batata = st.checkbox("Batata Palha (+ R$ 0,00)")
+    add_catupiry = st.checkbox("Catupiryo (+ R$ 3,00)")
+    
 # --- SEÇÃO DE BEBIDAS (COM PREÇOS VISÍVEIS!) ---
 st.subheader("🥤 Bebidas")
 bebidas = {
