@@ -1,7 +1,7 @@
 import streamlit as st
 
 # =========================================================
-# 🛠️ PAINEL DE CONTROLE (BASE ORIGINAL DO LEO - NÃO MEXER)
+# 🛠️ PAINEL DE CONTROLE (AUTONOMIA TOTAL DO LEO)
 # =========================================================
 
 TITULO_ABA_1 = "Hambúrguer Simples"
@@ -42,7 +42,7 @@ ITENS_CARDAPIO = {
     TITULO_ABA_4: [
         {"n": "Hambúrguer Picanha", "p": 18.00, "ing": "Pão, Picanha, Alface e Tomate"},
         {"n": "X-Burger Picanha", "p": 23.00, "ing": "Pão, Picanha, Queijo, Alface e Tomate"},
-        {"n": "X-Egg Picanha", "p": 26.00, "ing": "Persoalizado: Pão, Picanha, Queijo, Ovo, Alface e Tomate"},
+        {"n": "X-Egg Picanha", "p": 26.00, "ing": "Pão, Picanha, Queijo, Ovo, Alface e Tomate"},
         {"n": "X-Bacon Picanha", "p": 28.00, "ing": "Pão, Picanha, Queijo, Bacon, Alface e Tomate"},
         {"n": "X-Presunto Picanha", "p": 25.00, "ing": "Pão, Picanha, Queijo, Presunto, Alface e Tomate"},
         {"n": "X-Bacon Presunto Picanha", "p": 31.00, "ing": "Pão, Picanha, Queijo, Bacon, Presunto, Alface e Tomate"},
@@ -58,18 +58,34 @@ ITENS_CARDAPIO = {
         {"n": "X-Egg Bacon Presunto Filé", "p": 31.00, "ing": "Pão, Filé, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
     ],
     TITULO_ABA_6: [
-        {"n": "X-TUDO DO ALAN", "p": 45.00, "ing": "Picanha, Lombo, Filé Frango, Hambúrguer Simples, Queijo, Presunto, Ovo, Bacon, Alface, Tomate, Milho e Batata"}
+        {"n": "X-TUDO DO ALAN", "p": 45.00, "ing": "Picanha, Lombo, Filé Frango, Hambúrguer, Queijo, Presunto, Ovo, Bacon, Alface, Tomate, Milho e Batata"}
     ]
 }
 
-ADICIONAIS_PAGOS = {"Bife Hambúrguer": 5.0, "Bife Frango": 5.0, "Bife Picanha": 8.0, "Bife Lombo": 6.0, "Filé Frango": 6.0, "Queijo": 3.0, "Presunto": 3.0, "Ovo": 3.0, "Bacon": 5.0, "Catupiry": 5.0}
-CORTESIAS = {"Milho": 0.0, "Batata Palha": 0.0}
-BEBIDAS = {"Lata": 5.0, "600ml": 8.0, "1 Litro": 10.0, "2 Litros": 15.0}
-DOCES = {"Brigadeiro": 4.0, "Beijinho": 4.0, "Doce Amendoim": 3.0}
+ADICIONAIS_PAGOS = {
+    "Bife de Hambúrguer": 5.00,
+    "Bife de Frango": 5.00,
+    "Bife de Picanha": 8.00,
+    "Bife de Lombo": 6.00,
+    "Filé de Frango": 6.00,
+    "Queijo": 3.00, 
+    "Presunto": 3.00, 
+    "Ovo": 3.00, 
+    "Bacon": 5.00, 
+    "Catupiry": 5.00
+}
+
+CORTESIAS = {
+    "Milho": 0.00,
+    "Batata Palha": 0.00
+}
+
+BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
+DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
 WHATSAPP_ALAN = "5511999999999"
 
 # =========================================================
-# ⚙️ MOTOR DO SITE (SUBSTITUIÇÃO E ORGANIZAÇÃO)
+# ⚙️ MOTOR DO SITE (ESTRUTURA MANTIDA)
 # =========================================================
 
 st.set_page_config(page_title="Trailer do Alan", layout="centered")
@@ -92,79 +108,71 @@ st.markdown("""
 
 st.markdown('<h1 style="text-align:center; color:#0077b6;">🍔 Trailer do Alan</h1>', unsafe_allow_html=True)
 
-# Lógica de dicionário para manter cada "gaveta" separada
-if 'pedidos' not in st.session_state:
-    st.session_state.pedidos = {f"Lanche {i}": {"principal": None, "extras": []} for i in range(1, 7)}
+if 'carrinho' not in st.session_state:
+    st.session_state.carrinho = []
+
+def adicionar_ao_pedido(nome, preco, ingredientes):
+    st.session_state.carrinho.append({"item": nome, "preco": preco, "ing": ingredientes})
+    st.toast(f"✅ Adicionado: {nome}")
 
 tabs = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
 
-LISTA_6 = [f"Lanche {i}" for i in range(1, 7)]
-
 # ABA LANCHES
 with tabs[0]:
-    escolha = st.selectbox("📝 Selecione a vaga do pedido:", LISTA_6)
     for titulo, lanches in ITENS_CARDAPIO.items():
-        with st.expander(f"✨ {titulo}"):
+        with st.expander(f"✨ Opções de {titulo}"):
             c1, c2 = st.columns(2)
             for i, l in enumerate(lanches):
                 coluna = c1 if i % 2 == 0 else c2
                 if coluna.button(f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})", key=f"btn_{titulo}_{i}"):
-                    # SUBSTITUIÇÃO: se clicar em outro, troca o lanche dessa vaga
-                    st.session_state.pedidos[escolha]["principal"] = {"n": l['n'], "p": l['p']}
-                    st.toast(f"✅ {escolha} definido!")
+                    adicionar_ao_pedido(l['n'], l['p'], l['ing'])
 
 # ABA ADICIONAIS
 with tabs[1]:
-    escolha_add = st.selectbox("➕ Adicionar extras em:", LISTA_6, key="sel_add")
     st.write("### ➕ Extras (Cobrados)")
     c1, c2 = st.columns(2)
     for i, (nome, preco) in enumerate(ADICIONAIS_PAGOS.items()):
         coluna = c1 if i % 2 == 0 else c2
         if coluna.button(f"{nome}\n+ R$ {preco:.2f}", key=f"extra_pago_{i}"):
-            st.session_state.pedidos[escolha_add]["extras"].append({"n": nome, "p": preco})
-            st.toast(f"➕ Adicionado ao {escolha_add}")
+            adicionar_ao_pedido(f"Adicional {nome}", preco, "Extra")
+    
+    st.write("---")
+    st.write("### 🎁 Cortesias (Grátis)")
+    col1, col2 = st.columns(2)
+    for i, (nome, preco) in enumerate(CORTESIAS.items()):
+        coluna = col1 if i % 2 == 0 else col2
+        if coluna.button(f"{nome}\nGRÁTIS", key=f"cortesia_{i}"):
+            adicionar_ao_pedido(f"Cortesia {nome}", 0.00, "Grátis")
 
-# ABAS BEBIDAS E DOCES (Adicionando aos pedidos específicos)
+# ABAS BEBIDAS E DOCES
 with tabs[2]:
-    escolha_beb = st.selectbox("🥤 Bebida para qual pedido?", LISTA_6, key="sel_beb")
     for nome, preco in BEBIDAS.items():
         if st.button(f"🥤 {nome} - R$ {preco:.2f}", key=f"bebida_{nome}"):
-            st.session_state.pedidos[escolha_beb]["extras"].append({"n": f"Bebida {nome}", "p": preco})
-            st.toast(f"🥤 {nome} adicionada!")
+            adicionar_ao_pedido(f"Bebida {nome}", preco, "")
 
 with tabs[3]:
-    escolha_doce = st.selectbox("🍰 Doce para qual pedido?", LISTA_6, key="sel_doce")
     for nome, preco in DOCES.items():
         if st.button(f"🍰 {nome} - R$ {preco:.2f}", key=f"doce_{nome}"):
-            st.session_state.pedidos[escolha_doce]["extras"].append({"n": f"Doce {nome}", "p": preco})
-            st.toast(f"🍰 {nome} adicionado!")
+            adicionar_ao_pedido(nome, preco, "")
 
 # ABA FINALIZAR
 with tabs[4]:
     nome_u = st.text_input("Seu Nome:")
-    end_u = st.text_input("Endereço:")
+    end_u = st.text_input("Endereço Completo:")
+    tel_u = st.text_input("Telefone:")
+    obs_u = st.text_area("Observações:")
     
-    total_geral = 0.0
-    resumo_whats = ""
-    
-    st.write("### 🧾 Resumo do Pedido")
-    for l_nome in LISTA_6:
-        p = st.session_state.pedidos[l_nome]
-        if p["principal"]:
-            subtotal = p["principal"]["p"] + sum(e["p"] for e in p["extras"])
-            total_geral += subtotal
-            st.markdown(f"**📍 {l_nome}: {p['principal']['n']}**")
-            for e in p["extras"]:
-                st.write(f"- {e['n']} (R$ {e['p']:.2f})")
-            st.write(f"**Subtotal: R$ {subtotal:.2f}**")
-            st.write("---")
-            resumo_whats += f"\n*{l_nome}: {p['principal']['n']}*\n" + "".join([f"- {e['n']}\n" for e in p['extras']]) + f"*Subtotal: R$ {subtotal:.2f}*\n"
+    valor_t = sum(item['preco'] for item in st.session_state.carrinho)
     
     if st.button("🟢 CONCLUIR E ENVIAR WHATSAPP"):
-        if nome_u and end_u and total_geral > 0:
-            msg = f"*PEDIDO TRAILER DO ALAN*\n*Cliente:* {nome_u}\n*Endereço:* {end_u}\n{resumo_whats}\n*TOTAL GERAL: R$ {total_geral:.2f}*"
+        if nome_u and end_u and st.session_state.carrinho:
+            txt_p = "\n".join([f"- {i['item']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
+            msg = (f"*PEDIDO - TRAILER DO ALAN*\n*Cliente:* {nome_u}\n*Endereço:* {end_u}\n*Tel:* {tel_u}\n\n*ITENS:*\n{txt_p}\n\n*OBS:* {obs_u}\n*TOTAL: R$ {valor_t:.2f}*")
             link = f"https://wa.me/{WHATSAPP_ALAN}?text={msg.replace(' ', '%20').replace('\n', '%0A')}"
             st.link_button("Ir para o WhatsApp ✅", link)
+        else:
+            st.warning("Preencha os dados e escolha seus lanches!")
 
-if total_geral > 0:
-    st.markdown(f'<div class="footer-soma"><b>🛒 Valor Total: R$ {total_geral:.2f}</b></div>', unsafe_allow_html=True)
+if st.session_state.carrinho:
+    total_r = sum(item['preco'] for item in st.session_state.carrinho)
+    st.markdown(f'<div class="footer-soma"><b>🛒 Valor Total: R$ {total_r:.2f}</b></div>', unsafe_allow_html=True)
