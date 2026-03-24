@@ -4,12 +4,14 @@ import streamlit as st
 # 🛠️ PAINEL DE CONTROLE (AUTONOMIA TOTAL DO LEO)
 # =========================================================
 
+# 1. TÍTULOS DAS ABAS
 TITULO_ABA_1 = "Hambúrguer Simples"
 TITULO_ABA_2 = "Hambúrguer de Frango"
 TITULO_ABA_3 = "Hambúrguer de Lombo"
 TITULO_ABA_4 = "Hambúrguer de Picanha"
 TITULO_ABA_5 = "Filé de Frango"
 
+# 2. CARDÁPIO DETALHADO (7 POR ABA)
 ITENS_CARDAPIO = {
     TITULO_ABA_1: [
         {"n": "Hambúrguer", "p": 10.00, "ing": "Pão, Carne, Alface e Tomate"},
@@ -58,7 +60,7 @@ ITENS_CARDAPIO = {
     ]
 }
 
-# 3. ADICIONAIS PAGOS (Removida a Batata daqui)
+# 3. ADICIONAIS PAGOS (Sem a batata confusa)
 ADICIONAIS_PAGOS = {
     "Bife de Hambúrguer": 5.00,
     "Bife de Frango": 5.00,
@@ -72,7 +74,7 @@ ADICIONAIS_PAGOS = {
     "Catupiry": 5.00
 }
 
-# 4. CORTESIAS (Valor 0.00)
+# 4. CORTESIAS (Apenas Milho e Batata Palha)
 CORTESIAS = {
     "Milho": 0.00,
     "Batata Palha": 0.00
@@ -83,16 +85,15 @@ DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
 WHATSAPP_ALAN = "5511999999999"
 
 # =========================================================
-# ⚙️ MOTOR DO SITE
+# ⚙️ MOTOR DO SITE (CORRIGIDO)
 # =========================================================
 
 st.set_page_config(page_title="Trailer do Alan", layout="centered")
 
-# Estilo Visual e Padronização dos Botões
+# Estilo para manter o padrão e os botões quadrados
 st.markdown("""
     <style>
     .stApp { background-color: #F0F8FF; }
-    /* Padronização dos botões para serem quadrados e iguais */
     .stButton>button { 
         background-color: #0077b6; color: white; width: 100%; border-radius: 12px; 
         min-height: 120px; font-weight: bold; font-size: 14px; margin-bottom: 10px;
@@ -124,43 +125,3 @@ with tabs[0]:
             for i, l in enumerate(lanches):
                 coluna = c1 if i % 2 == 0 else c2
                 if coluna.button(f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})", key=f"btn_{titulo}_{i}"):
-                    adicionar_ao_pedido(l['n'], l['p'], l['ing'])
-
-with tabs[1]:
-    st.write("### ➕ Extras (Cobrados)")
-    c1, c2 = st.columns(2)
-    for i, (nome, preco) in enumerate(ADICIONAIS_PAGOS.items()):
-        coluna = c1 if i % 2 == 0 else c2
-        # O botão agora tem um tamanho padrão garantido pelo CSS
-        if coluna.button(f"{nome}\n+ R$ {preco:.2f}", key=f"extra_{i}"):
-            adicionar_ao_pedido(f"Adicional {nome}", preco, "Extra")
-    
-    st.write("---")
-    st.write("### 🎁 Cortesias (Grátis)")
-    col_cortesia1, col_cortesia2 = st.columns(2)
-    for i, (nome, preco) in enumerate(CORTESIAS.items()):
-        coluna = col_cortesia1 if i % 2 == 0 else col_cortesia2
-        if coluna.button(f"{nome}\nGRÁTIS", key=f"cortesia_{i}"):
-            adicionar_ao_pedido(f"Cortesia {nome}", 0.00, "Grátis")
-
-with tabs[2]:
-    for nome, preco in BEBIDAS.items():
-        if st.button(f"🥤 {nome} - R$ {preco:.2f}"):
-            adicionar_ao_pedido(f"Bebida {nome}", preco, "")
-
-with tabs[3]:
-    for nome, preco in DOCES.items():
-        if st.button(f"🍰 {nome} - R$ {preco:.2f}"):
-            adicionar_ao_pedido(nome, preco, "")
-
-with tabs[4]:
-    nome_usuario = st.text_input("Seu Nome:")
-    end_usuario = st.text_input("Endereço Completo:")
-    tel_usuario = st.text_input("Telefone:")
-    obs_usuario = st.text_area("Observações:")
-    
-    valor_total = sum(item['preco'] for item in st.session_state.carrinho)
-    
-    if st.button("🟢 CONCLUIR E ENVIAR WHATSAPP"):
-        if nome_usuario and end_usuario and st.session_state.carrinho:
-            txt_pedido = "\n".join([f
