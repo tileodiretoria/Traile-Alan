@@ -153,4 +153,33 @@ with col_visual:
     
     for idx, l in enumerate(st.session_state.lanches_fechados):
         sub = l['p'] + sum(e['p'] for e in l['extras'])
-        st.success(f"**✅ LANCHE {idx+1}: {l['n']}** (R$ {l['p']:.2f})\n\n" + "".join([f"• {e['n']} (R$ {e['p']:.2f})  \n" for e in l['extras']]) + f"**Total
+        st.success(f"**✅ LANCHE {idx+1}: {l['n']}** (R$ {l['p']:.2f})\n\n" + "".join([f"• {e['n']} (R$ {e['p']:.2f})  \n" for e in l['extras']]) + f"**Total Lanche: R$ {sub:.2f}**")
+
+    if st.session_state.id_atual <= 6:
+        st.markdown(f"### 🍔 Lanche {st.session_state.id_atual}")
+        if st.session_state.lanche_atual["n"]:
+            l_at = st.session_state.lanche_atual
+            st.info(f"**Item Base:** {l_at['n']} (R$ {l_at['p']:.2f})")
+            sub_p = l_at['p']
+            for i, e in enumerate(l_at["extras"]):
+                c1, c2 = st.columns([0.8, 0.2])
+                c1.write(f"• {e['n']} (R$ {e['p']:.2f})")
+                sub_p += e['p']
+                if c2.button("🗑️", key=f"del_{i}"):
+                    st.session_state.lanche_atual["extras"].pop(i)
+                    st.rerun()
+            st.write(f"**Total Parcial: R$ {sub_p:.2f}**")
+            if st.button(f"🔒 FINALIZAR LANCHE {st.session_state.id_atual} E MONTAR OUTRO", use_container_width=True):
+                st.session_state.lanches_fechados.append(st.session_state.lanche_atual.copy())
+                st.session_state.lanche_atual = {"n": None, "p": 0.0, "ing": "", "extras": []}
+                st.session_state.id_atual += 1
+                st.rerun()
+        else:
+            st.warning("Escolha um lanche na aba ao lado.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# RODAPÉ COM TOTAL GERAL
+total_geral = sum([l['p'] + sum(e['p'] for e in l['extras']) for l in st.session_state.lanches_fechados])
+if st.session_state.lanche_atual['n']:
+    total_geral += st.session_state.lanche_atual['p'] + sum(e['p'] for e in st.session_state.lanche_atual['extras'])
+st.markdown(f'<div style="position:fixed; bottom:0; left:0; width:100%; background:white; padding:10px; text-align:center; border-top:2px solid #0077b6; z-index:100;"><b>VALOR TOTAL DO PEDIDO: R$ {total_geral:.2f}</b></div>', unsafe_allow_html=True)
