@@ -1,123 +1,105 @@
 import streamlit as st
 
-# --- CONFIGURAÇÃO DA PÁGINA ---
-st.set_page_config(page_title="Trailer do Alan - Cardápio", page_icon="🍔", layout="centered")
+# =========================================================
+# 🛠️ PAINEL DE CONTROLE (MUDE TUDO POR AQUI!)
+# =========================================================
 
-# --- ESTILO VISUAL ---
-st.markdown("""
+# 1. TÍTULO DO TRAILER
+NOME_TRAILER = "🍔 Trailer do Alan"
+
+# 2. CONFIGURAÇÃO DAS ABAS (Nomes e Itens)
+# Aqui você muda o nome da aba, o nome do lanche, o preço e o que vem dentro.
+CARDAPIO = {
+    "Hambúrguer Simples": [
+        {"nome": "Hambúrguer", "preco": 10.00, "ing": "Pão, Carne, Alface e Tomate"},
+        {"nome": "X-Burger", "preco": 15.00, "ing": "Pão, Carne, Queijo, Alface e Tomate"},
+        {"nome": "X-Egg", "preco": 18.00, "ing": "Pão, Carne, Queijo, Ovo, Alface e Tomate"},
+        {"nome": "X-Bacon", "preco": 20.00, "ing": "Pão, Carne, Queijo, Bacon, Alface e Tomate"},
+    ],
+    "Hambúrguer de Frango": [
+        {"nome": "Hambúrguer Frango", "preco": 12.00, "ing": "Pão, Frango, Alface e Tomate"},
+        {"nome": "X-Burger Frango", "preco": 17.00, "ing": "Pão, Frango, Queijo, Alface e Tomate"},
+        {"nome": "X-Egg Frango", "preco": 20.00, "ing": "Pão, Frango, Queijo, Ovo, Alface e Tomate"},
+    ],
+    "Opções de Lombo": [
+        {"nome": "X-Lombo", "preco": 14.00, "ing": "Pão, Lombo, Alface e Tomate"},
+    ],
+    "Opções de Picanha": [
+        {"nome": "X-Picanha", "preco": 18.00, "ing": "Pão, Picanha, Alface e Tomate"},
+    ],
+    "Filé de Frango": [
+        {"nome": "X-Filé", "preco": 15.00, "ing": "Pão, Filé de Frango, Alface e Tomate"},
+    ]
+}
+
+# 3. ADICIONAIS (Nomes e Preços)
+ADICIONAIS = {"Queijo": 3, "Presunto": 3, "Ovo": 3, "Bacon": 5, "Milho": 2}
+
+# 4. BEBIDAS
+BEBIDAS = {"Refri Lata": 5.00, "Refri 600ml": 8.00, "Suco": 7.00}
+
+# 5. CONTATO DO ALAN
+WHATSAPP_ALAN = "5511999999999"
+
+# =========================================================
+# ⚙️ PARTE TÉCNICA (NÃO PRECISA MEXER AQUI ABAIXO)
+# =========================================================
+
+st.set_page_config(page_title=NOME_TRAILER, page_icon="🍔", layout="centered")
+
+st.markdown(f"""
     <style>
-    .stApp { background-color: #F0F8FF; }
-    .main-title { color: #0077b6; font-size: 38px; font-weight: bold; text-align: center; margin-bottom: 5px; }
-    .stButton>button { 
+    .stApp {{ background-color: #F0F8FF; }}
+    .main-title {{ color: #0077b6; font-size: 38px; font-weight: bold; text-align: center; }}
+    .stButton>button {{ 
         background-color: #00b4d8; color: white; width: 100%; border-radius: 12px; 
-        min-height: 110px; font-weight: bold; border: none; transition: 0.3s;
-        font-size: 14px; margin-bottom: 10px; white-space: pre-wrap;
-    }
-    .stButton>button:hover { background-color: #0077b6; transform: scale(1.02); }
-    .footer-total { 
-        position: fixed; bottom: 0; left: 0; width: 100%; background-color: white; 
-        padding: 15px; text-align: center; border-top: 3px solid #00b4d8; z-index: 100;
-    }
+        min-height: 100px; font-weight: bold; font-size: 14px;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
-st.markdown('<p class="main-title">🍔 Trailer do Alan</p>', unsafe_allow_html=True)
+st.markdown(f'<p class="main-title">{NOME_TRAILER}</p>', unsafe_allow_html=True)
 
 if 'carrinho' not in st.session_state:
     st.session_state.carrinho = []
 
-def adicionar(nome, preco, ingredientes):
-    st.session_state.carrinho.append({"item": nome, "preco": preco, "ing": ingredientes})
+def adicionar(nome, preco, ing):
+    st.session_state.carrinho.append({"item": nome, "preco": preco, "ing": ing})
     st.toast(f"✅ {nome} adicionado!")
 
-# --- ABAS ---
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
+tab1, tab2, tab3, tab4 = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🏁 Finalizar"])
 
 with tab1:
-    # DEFINIÇÃO DAS CATEGORIAS
-    categorias = [
-        {"nome": "Hambúrguer Simples", "tipo": "Carne", "pb": 10}, 
-        {"nome": "Hambúrguer de Frango", "tipo": "Hambúrguer de Frango", "pb": 12},
-        {"nome": "Hambúrguer de Lombo", "tipo": "Lombo", "pb": 14},
-        {"nome": "Hambúrguer de Picanha", "tipo": "Picanha", "pb": 18},
-        {"nome": "Filé de Frango", "tipo": "Filé de Frango", "pb": 15},
-    ]
-
-    for cat in categorias:
-        with st.expander(f"✨ Opções de {cat['nome']}"):
-            tipo = cat['tipo']
-            pb = cat['pb']
-            col1, col2 = st.columns(2)
-            
-            # Ajuste solicitado: Nomes limpos para a aba de Carne (Hambúrguer Simples)
-            if tipo == "Carne":
-                lanches = [
-                    {"n": "Hambúrguer", "p": pb, "ing": "Pão, Carne, Alface e Tomate"},
-                    {"n": "X-Burger", "p": pb+5, "ing": "Pão, Carne, Queijo, Alface e Tomate"},
-                    {"n": "X-Egg", "p": pb+8, "ing": "Pão, Carne, Queijo, Ovo, Alface e Tomate"},
-                    {"n": "X-Bacon", "p": pb+10, "ing": "Pão, Carne, Queijo, Bacon, Alface e Tomate"},
-                    {"n": "X-Presunto", "p": pb+7, "ing": "Pão, Carne, Queijo, Presunto, Alface e Tomate"},
-                    {"n": "X-Bacon Presunto", "p": pb+13, "ing": "Pão, Carne, Queijo, Bacon, Presunto, Alface e Tomate"},
-                    {"n": "X-Egg Bacon Presunto", "p": pb+16, "ing": "Pão, Carne, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
-                ]
-            else:
-                lanches = [
-                    {"n": f"{tipo}", "p": pb, "ing": f"Pão, {tipo}, Alface e Tomate"},
-                    {"n": f"X-Burger {tipo}", "p": pb+5, "ing": f"Pão, {tipo}, Queijo, Alface e Tomate"},
-                    {"n": f"X-Egg {tipo}", "p": pb+8, "ing": f"Pão, {tipo}, Queijo, Ovo, Alface e Tomate"},
-                    {"n": f"X-Bacon {tipo}", "p": pb+10, "ing": f"Pão, {tipo}, Queijo, Bacon, Alface e Tomate"},
-                    {"n": f"X-Presunto {tipo}", "p": pb+7, "ing": f"Pão, {tipo}, Queijo, Presunto, Alface e Tomate"},
-                    {"n": f"X-Bacon Presunto {tipo}", "p": pb+13, "ing": f"Pão, {tipo}, Queijo, Bacon, Presunto, Alface e Tomate"},
-                    {"n": f"X-Egg Bacon Presunto {tipo}", "p": pb+16, "ing": f"Pão, {tipo}, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
-                ]
-
+    for categoria, lanches in CARDAPIO.items():
+        with st.expander(f"✨ {categoria}"):
+            cols = st.columns(2)
             for i, l in enumerate(lanches):
-                col_target = col1 if i % 2 == 0 else col2
-                btn_label = f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})"
-                if col_target.button(btn_label, key=f"btn_{l['n']}_{cat['nome']}"):
-                    adicionar(l['n'], l['p'], l['ing'])
+                with cols[i % 2]:
+                    texto_botao = f"{l['nome']}\nR$ {l['preco']:.2f}\n({l['ing']})"
+                    if st.button(texto_botao, key=f"{categoria}_{l['nome']}"):
+                        adicionar(l['nome'], l['preco'], l['ing'])
 
-    st.markdown("---")
-    xtudo_ing = "Pão, Todos os bifes (Carne, Frango, Lombo e Picanha), Queijo, Ovo, Bacon, Presunto, Alface e Tomate"
-    if st.button(f"👑 X-TUDO ESPECIAL ALAN\nR$ 45,00\n({xtudo_ing})"):
-        adicionar("X-Tudo Especial Alan", 45.00, xtudo_ing)
-
-# --- ADICIONAIS, BEBIDAS E DOCES ---
 with tab2:
-    adics = {"Queijo": 3, "Presunto": 3, "Ovo": 3, "Bacon": 5, "Milho": 2, "Batata": 4, "Catupiry": 5}
     cols = st.columns(2)
-    for i, (item, preco) in enumerate(adics.items()):
+    for i, (item, preco) in enumerate(ADICIONAIS.items()):
         if cols[i % 2].button(f"{item}\n+ R$ {preco:.2f}"):
             adicionar(f"Adicional {item}", preco, "Extra")
 
 with tab3:
-    refris = {"Lata": 5, "600ml": 8, "1 Litro": 10, "2 Litros": 15}
-    for tam, preco in refris.items():
-        if st.button(f"🥤 Refri {tam}\nR$ {preco:.2f}"):
-            adicionar(f"Refri {tam}", preco, "")
+    for item, preco in BEBIDAS.items():
+        if st.button(f"{item}\nR$ {preco:.2f}"):
+            adicionar(item, preco, "")
 
 with tab4:
-    doces = {"Brigadeiro": 4, "Beijinho": 4, "Doce Amendoim": 3, "Doce Morango": 5}
-    for doce, preco in doces.items():
-        if st.button(f"{doce}\nR$ {preco:.2f}"):
-            adicionar(doce, preco, "")
-
-# --- ABA FINALIZAR (WhatsApp) ---
-with tab5:
     nome = st.text_input("Seu Nome:")
-    end = st.text_input("Endereço Completo:")
-    obs = st.text_area("Observações (Ex: Sem cebola):")
-
-    total_final = sum(item['preco'] for item in st.session_state.carrinho)
+    end = st.text_input("Endereço:")
+    total = sum(i['preco'] for i in st.session_state.carrinho)
     
-    if st.button("🟢 ENVIAR PEDIDO PELO WHATSAPP"):
+    if st.button("🟢 ENVIAR PEDIDO"):
         if nome and end and st.session_state.carrinho:
-            itens_lista = "\n".join([f"* {i['item']} (Ingredientes: {i['ing']})" for i in st.session_state.carrinho])
-            mensagem = f"*PEDIDO - TRAILER DO ALAN*\n\n*Cliente:* {nome}\n*Endereço:* {end}\n\n*ITENS:*\n{itens_lista}\n\n*OBS:* {obs}\n\n*TOTAL: R$ {total_final:.2f}*"
-            link_wa = f"https://wa.me/5511999999999?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
-            st.link_button("Abrir WhatsApp ✅", link_wa)
-        else:
-            st.error("Preencha os dados e escolha um item!")
+            lista = "\n".join([f"* {i['item']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
+            msg = f"*PEDIDO*\n*Cliente:* {nome}\n*Endereço:* {end}\n\n*ITENS:*\n{lista}\n\n*TOTAL: R$ {total:.2f}*"
+            st.link_button("Abrir WhatsApp ✅", f"https://wa.me/{WHATSAPP_ALAN}?text={msg.replace(' ', '%20')}")
 
 if st.session_state.carrinho:
-    st.markdown(f'<div class="footer-total"><b>🛒 Total do Pedido: R$ {sum(item["preco"] for item in st.session_state.carrinho):.2f}</b></div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="position:fixed;bottom:0;left:0;width:100%;background:white;padding:10px;text-align:center;border-top:3px solid #00b4d8;"><b>Total: R$ {sum(i["preco"] for i in st.session_state.carrinho):.2f}</b></div>', unsafe_allow_html=True)
