@@ -11,7 +11,7 @@ TITULO_ABA_3 = "Hambúrguer de Lombo"
 TITULO_ABA_4 = "Hambúrguer de Picanha"
 TITULO_ABA_5 = "Filé de Frango"
 
-# 2. CARDÁPIO DETALHADO (Mude nomes, preços e ingredientes aqui)
+# 2. CARDÁPIO DETALHADO (7 Lanches por Aba)
 ITENS_CARDAPIO = {
     TITULO_ABA_1: [
         {"n": "Hambúrguer", "p": 10.00, "ing": "Pão, Carne, Alface e Tomate"},
@@ -60,21 +60,42 @@ ITENS_CARDAPIO = {
     ]
 }
 
-# 3. ADICIONAIS, BEBIDAS E DOCES
-ADICIONAIS = {"Queijo": 3.0, "Presunto": 3.0, "Ovo": 3.0, "Bacon": 5.0, "Milho": 2.0, "Batata": 4.0}
-BEBIDAS = {"Lata": 5.0, "600ml": 8.0, "1 Litro": 10.0, "2 Litros": 15.0}
-DOCES = {"Brigadeiro": 4.0, "Beijinho": 4.0, "Doce Amendoim": 3.0}
+# 3. ADICIONAIS PAGOS (Incluindo os Bifes que você pediu)
+# Aqui você muda o nome ou o valor do que é cobrado
+ADICIONAIS_PAGOS = {
+    "Bife de Hambúrguer": 5.00,
+    "Bife de Frango": 5.00,
+    "Bife de Picanha": 8.00,
+    "Bife de Lombo": 6.00,
+    "Filé de Frango": 6.00,
+    "Queijo": 3.00, 
+    "Presunto": 3.00, 
+    "Ovo": 3.00, 
+    "Bacon": 5.00, 
+    "Batata": 4.00, 
+    "Catupiry": 5.00
+}
 
-# 4. CONTATO WHATSAPP
+# 4. CORTESIAS (Valor 0.00)
+# Itens que o cliente pode adicionar sem custo
+CORTESIAS = {
+    "Milho": 0.00,
+    "Batata Palha": 0.00
+}
+
+# 5. BEBIDAS E DOCES
+BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
+DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
+
+# 6. CONTATO WHATSAPP
 WHATSAPP_ALAN = "5511999999999"
 
 # =========================================================
-# ⚙️ MOTOR DO SITE (ESTRUTURA E CÁLCULOS)
+# ⚙️ MOTOR DO SITE (LÓGICA E SOMA)
 # =========================================================
 
 st.set_page_config(page_title="Trailer do Alan", layout="centered")
 
-# Estilo Visual (Cores e Rodapé Fixo)
 st.markdown("""
     <style>
     .stApp { background-color: #F0F8FF; }
@@ -92,11 +113,9 @@ st.markdown("""
 
 st.markdown('<h1 style="text-align:center; color:#0077b6;">🍔 Trailer do Alan</h1>', unsafe_allow_html=True)
 
-# Inicializa o carrinho vazio se for a primeira vez abrindo o site
 if 'carrinho' not in st.session_state:
     st.session_state.carrinho = []
 
-# Função simples para colocar itens na lista
 def adicionar_ao_pedido(nome, preco, ingredientes):
     st.session_state.carrinho.append({"item": nome, "preco": preco, "ing": ingredientes})
     st.toast(f"✅ Adicionado: {nome}")
@@ -110,23 +129,31 @@ with tabs[0]:
             c1, c2 = st.columns(2)
             for i, l in enumerate(lanches):
                 coluna = c1 if i % 2 == 0 else c2
-                # O botão mostra: Nome, Preço e Ingredientes
                 if coluna.button(f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})", key=f"btn_{titulo}_{i}"):
                     adicionar_ao_pedido(l['n'], l['p'], l['ing'])
 
-# --- ABA DE ADICIONAIS ---
+# --- ABA DE ADICIONAIS (PAGOS E CORTESIAS) ---
 with tabs[1]:
+    st.write("### ➕ Extras (Cobrados)")
     c1, c2 = st.columns(2)
-    for i, (nome, preco) in enumerate(ADICIONAIS.items()):
+    for i, (nome, preco) in enumerate(ADICIONAIS_PAGOS.items()):
         coluna = c1 if i % 2 == 0 else c2
         if coluna.button(f"{nome}\n+ R$ {preco:.2f}"):
-            adicionar_ao_pedido(f"Extra {nome}", preco, "Adicional")
+            adicionar_ao_pedido(f"Adicional {nome}", preco, "Extra")
+    
+    st.write("---")
+    st.write("### 🎁 Cortesias (Grátis)")
+    col_cortesia1, col_cortesia2 = st.columns(2)
+    for i, (nome, preco) in enumerate(CORTESIAS.items()):
+        coluna = col_cortesia1 if i % 2 == 0 else col_cortesia2
+        if coluna.button(f"{nome}\nGRÁTIS"):
+            adicionar_ao_pedido(f"Cortesia {nome}", 0.00, "Grátis")
 
 # --- ABA DE BEBIDAS E DOCES ---
 with tabs[2]:
     for nome, preco in BEBIDAS.items():
         if st.button(f"🥤 {nome} - R$ {preco:.2f}"):
-            adicionar_ao_pedido(f"Refri {nome}", preco, "")
+            adicionar_ao_pedido(f"Bebida {nome}", preco, "")
 
 with tabs[3]:
     for nome, preco in DOCES.items():
@@ -138,15 +165,13 @@ with tabs[4]:
     nome_usuario = st.text_input("Seu Nome:")
     end_usuario = st.text_input("Endereço Completo:")
     tel_usuario = st.text_input("Telefone:")
-    obs_usuario = st.text_area("Observações do Pedido:")
+    obs_usuario = st.text_area("Observações (Ex: Sem cebola, ponto da carne):")
     
-    # --- EXPLICAÇÃO DA SOMA NO CÓDIGO ---
-    # Pegamos o preço de cada item que está no carrinho e somamos todos
+    # Soma total detalhada no código para sua autonomia
     valor_total = sum(item['preco'] for item in st.session_state.carrinho)
     
     if st.button("🟢 CONCLUIR E ENVIAR WHATSAPP"):
         if nome_usuario and end_usuario and st.session_state.carrinho:
-            # Monta a lista de texto para o Zap
             txt_pedido = "\n".join([f"- {i['item']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
             
             mensagem_final = (
@@ -158,16 +183,13 @@ with tabs[4]:
                 f"*OBS:* {obs_usuario}\n"
                 f"*TOTAL: R$ {valor_total:.2f}*"
             )
-            # Link que abre o WhatsApp
             link = f"https://wa.me/{WHATSAPP_ALAN}?text={mensagem_final.replace(' ', '%20').replace('\n', '%0A')}"
             st.link_button("Ir para o WhatsApp ✅", link)
         else:
             st.warning("Preencha seu nome, endereço e adicione itens ao carrinho!")
 
 # --- BARRA DE SOMA AUTOMÁTICA (RODAPÉ) ---
-# Se houver algo no carrinho, mostra o total lá embaixo
 if st.session_state.carrinho:
-    # Esta linha soma os preços de novo para mostrar na barra fixa
     total_rodape = sum(item['preco'] for item in st.session_state.carrinho)
     st.markdown(f'''
         <div class="footer-soma">
