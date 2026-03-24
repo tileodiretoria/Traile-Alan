@@ -9,6 +9,7 @@ TITULO_ABA_2 = "Hambúrguer de Frango"
 TITULO_ABA_3 = "Hambúrguer de Lombo"
 TITULO_ABA_4 = "Hambúrguer de Picanha"
 TITULO_ABA_5 = "Filé de Frango"
+TITULO_ABA_6 = "🔥 X-TUDO"
 
 ITENS_CARDAPIO = {
     TITULO_ABA_1: [
@@ -55,6 +56,9 @@ ITENS_CARDAPIO = {
         {"n": "X-Presunto Filé", "p": 22.00, "ing": "Pão, Filé, Queijo, Presunto, Alface e Tomate"},
         {"n": "X-Bacon Presunto Filé", "p": 28.00, "ing": "Pão, Filé, Queijo, Bacon, Presunto, Alface e Tomate"},
         {"n": "X-Egg Bacon Presunto Filé", "p": 31.00, "ing": "Pão, Filé, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
+    ],
+    TITULO_ABA_6: [
+        {"n": "X-TUDO DO ALAN", "p": 45.00, "ing": "4 Bifes, Queijo, Presunto, Ovo, Bacon, Alface, Tomate, Milho e Batata"}
     ]
 }
 
@@ -78,7 +82,7 @@ CORTESIAS = {
 
 BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
 DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
-WHATSAPP_ALAN = "5571992363322"
+WHATSAPP_ALAN = "5511999999999"
 
 # =========================================================
 # ⚙️ MOTOR DO SITE (REVISADO E ESTÁVEL)
@@ -123,7 +127,7 @@ with tabs[0]:
                 if coluna.button(f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})", key=f"btn_{titulo}_{i}"):
                     adicionar_ao_pedido(l['n'], l['p'], l['ing'])
 
-# ABA ADICIONAIS (CORRIGIDA)
+# ABA ADICIONAIS
 with tabs[1]:
     st.write("### ➕ Extras (Cobrados)")
     c1, c2 = st.columns(2)
