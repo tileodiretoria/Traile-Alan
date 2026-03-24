@@ -24,7 +24,7 @@ ADICIONAIS_PAGOS = {"Bife de Hambúrguer": 5.00, "Bife de Frango": 5.00, "Bife d
 CORTESIAS = {"Milho": 0.00, "Batata Palha": 0.00}
 BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
 DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
-WHATSAPP_ALAN = "5511999999999"
+WHATSAPP_ALAN = "5571992363322"
 
 # =========================================================
 # ⚙️ MOTOR DO SITE
@@ -45,9 +45,17 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# INICIALIZAÇÃO DO SISTEMA
 if 'lanches_fechados' not in st.session_state: st.session_state.lanches_fechados = []
 if 'lanche_atual' not in st.session_state: st.session_state.lanche_atual = {"n": None, "p": 0.0, "ing": "", "extras": []}
 if 'id_atual' not in st.session_state: st.session_state.id_atual = 1
+
+# FUNÇÃO PARA RESETAR O SITE APÓS O WHATSAPP
+def resetar_site():
+    st.session_state.lanches_fechados = []
+    st.session_state.lanche_atual = {"n": None, "p": 0.0, "ing": "", "extras": []}
+    st.session_state.id_atual = 1
+    st.rerun()
 
 col_menu, col_visual = st.columns([0.60, 0.40])
 
@@ -55,7 +63,7 @@ with col_menu:
     tabs = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
 
     if st.session_state.id_atual <= 6:
-        with tabs[0]: # ABA LANCHES
+        with tabs[0]:
             st.info(f"📍 Selecione o Lanche {st.session_state.id_atual}")
             for titulo, lanches in ITENS_CARDAPIO.items():
                 with st.expander(f"✨ {titulo}"):
@@ -66,81 +74,77 @@ with col_menu:
                             st.session_state.lanche_atual["ing"] = l['ing']
                             st.rerun()
 
-        with tabs[1]: # ABA ADICIONAIS (COM CORTESIAS)
+        with tabs[1]:
             st.write("### ➕ Extras e Cortesias")
             c1, c2 = st.columns(2)
-            # Adicionais Pagos
             for i, (nome, preco) in enumerate({**ADICIONAIS_PAGOS, **CORTESIAS}.items()):
                 coluna = c1 if i % 2 == 0 else c2
                 if coluna.button(f"{nome} (+R$ {preco:.2f})", key=f"extra_{i}"):
                     st.session_state.lanche_atual["extras"].append({"n": nome, "p": preco})
                     st.rerun()
 
-        with tabs[2]: # ABA BEBIDAS
+        with tabs[2]:
             for nome, preco in BEBIDAS.items():
                 if st.button(f"🥤 {nome} - R$ {preco:.2f}", key=f"beb_{nome}"):
                     st.session_state.lanche_atual["extras"].append({"n": f"Bebida {nome}", "p": preco})
                     st.rerun()
 
-        with tabs[3]: # ABA DOCES
+        with tabs[3]:
             for nome, preco in DOCES.items():
                 if st.button(f"🍰 {nome} - R$ {preco:.2f}", key=f"doc_{nome}"):
                     st.session_state.lanche_atual["extras"].append({"n": nome, "p": preco})
                     st.rerun()
 
-    with tabs[4]: # ABA FINALIZAR
+    with tabs[4]:
         st.subheader("🏁 Finalizar Pedido")
-        nome_u = st.text_input("Seu Nome:")
-        tel_u = st.text_input("Seu Telefone/WhatsApp:")
-        end_u = st.text_input("Endereço Completo de Entrega:")
-        obs_u = st.text_area("Alguma observação? (Ex: Tirar cebola)")
+        nome_u = st.text_input("Seu Nome:", key="nome_final")
+        tel_u = st.text_input("Seu Telefone/WhatsApp:", key="tel_final")
+        end_u = st.text_input("Endereço Completo de Entrega:", key="end_final")
+        obs_u = st.text_area("Alguma observação? (Ex: Tirar cebola)", key="obs_final")
         
-        # Lógica do WhatsApp
-        if st.button("🟢 CONCLUIR E ENVIAR WHATSAPP", type="primary"):
-            # Somar tudo para o envio
-            todos_lanches = st.session_state.lanches_fechados.copy()
-            if st.session_state.lanche_atual["n"]:
-                todos_lanches.append(st.session_state.lanche_atual)
+        todos_lanches = st.session_state.lanches_fechados.copy()
+        if st.session_state.lanche_atual["n"]:
+            todos_lanches.append(st.session_state.lanche_atual)
+        
+        if len(todos_lanches) > 0 and nome_u and tel_u and end_u:
+            resumo_texto = f"*PEDIDO TRAILER DO ALAN*\n*Cliente:* {nome_u}\n*Tel:* {tel_u}\n*Endereço:* {end_u}\n"
+            if obs_u: resumo_texto += f"*Obs:* {obs_u}\n"
+            resumo_texto += f"\n--- ITENS ---"
             
-            if nome_u and tel_u and end_u and len(todos_lanches) > 0:
-                resumo_texto = f"*PEDIDO TRAILER DO ALAN*\n"
-                resumo_texto += f"*Cliente:* {nome_u}\n*Tel:* {tel_u}\n*Endereço:* {end_u}\n"
-                if obs_u: resumo_texto += f"*Obs:* {obs_u}\n"
-                resumo_texto += f"\n--- ITENS ---"
-                
-                total_geral = 0
-                for i, l in enumerate(todos_lanches):
-                    sub = l['p'] + sum(e['p'] for e in l['extras'])
-                    total_geral += sub
-                    resumo_texto += f"\n\n*Lanche {i+1}: {l['n']}* (R$ {l['p']:.2f})"
-                    for e in l['extras']:
-                        resumo_texto += f"\n- {e['n']} (R$ {e['p']:.2f})"
-                    resumo_texto += f"\n*Subtotal: R$ {sub:.2f}*"
-                
-                resumo_texto += f"\n\n*TOTAL GERAL: R$ {total_geral:.2f}*"
-                st.link_button("Clique aqui para confirmar no WhatsApp", f"https://wa.me/{WHATSAPP_ALAN}?text={resumo_texto.replace(' ', '%20').replace('\n', '%0A')}")
-            else:
-                st.error("Por favor, preencha seus dados e selecione ao menos um lanche!")
+            total_geral = 0
+            for i, l in enumerate(todos_lanches):
+                sub = l['p'] + sum(e['p'] for e in l['extras'])
+                total_geral += sub
+                resumo_texto += f"\n\n*Lanche {i+1}: {l['n']}* (R$ {l['p']:.2f})"
+                for e in l['extras']: resumo_texto += f"\n- {e['n']} (R$ {e['p']:.2f})"
+                resumo_texto += f"\n*Subtotal: R$ {sub:.2f}*"
+            
+            resumo_texto += f"\n\n*TOTAL GERAL: R$ {total_geral:.2f}*"
+            
+            # BOTÃO QUE ENVIA E LIMPA O SITE
+            if st.link_button("🟢 ENVIAR PARA O WHATSAPP DO ALAN", f"https://wa.me/{WHATSAPP_ALAN}?text={resumo_texto.replace(' ', '%20').replace('\n', '%0A')}"):
+                st.info("⚠️ Após enviar no WhatsApp, clique no botão abaixo para iniciar um novo pedido.")
+                if st.button("🔄 INICIAR NOVO PEDIDO (LIMPAR SITE)"):
+                    resetar_site()
+        else:
+            st.warning("Preencha seus dados e escolha o lanche para liberar o WhatsApp!")
 
-# COLUNA DA DIREITA: PAINEL COM PREÇOS DETALHADOS
+# PAINEL LATERAL (PREÇOS DETALHADOS)
 with col_visual:
     st.markdown('<div class="panel-visual">', unsafe_allow_html=True)
-    st.subheader("📝 Seu Pedido Atual")
+    st.subheader("📝 Seu Pedido")
     
-    # Mostrar lanches fechados
     for idx, l in enumerate(st.session_state.lanches_fechados):
         sub_f = l['p'] + sum(e['p'] for e in l['extras'])
-        st.markdown(f"""<div class="lanche-card"><b>✅ Lanche {idx+1}: {l['n']}</b> (R$ {l['p']:.2f})<br>
+        st.markdown(f"""<div class="lanche-card">✅ <b>Lanche {idx+1}: {l['n']}</b> (R$ {l['p']:.2f})<br>
         {f"".join([f"• {e['n']} (R$ {e['p']:.2f})<br>" for e in l['extras']])}
-        <b>Total Lanche {idx+1}: R$ {sub_f:.2f}</b></div>""", unsafe_allow_html=True)
+        <b>Total Lanche: R$ {sub_f:.2f}</b></div>""", unsafe_allow_html=True)
 
-    # Mostrar lanche em montagem
     if st.session_state.id_atual <= 6:
         st.markdown(f"### 🍔 Lanche {st.session_state.id_atual}")
         if st.session_state.lanche_atual["n"]:
             l_at = st.session_state.lanche_atual
             st.write(f"**Item base:** {l_at['n']} (R$ {l_at['p']:.2f})")
-            
             sub_parcial = l_at['p']
             for i, e in enumerate(l_at["extras"]):
                 c1, c2 = st.columns([0.8, 0.2])
@@ -149,20 +153,7 @@ with col_visual:
                 if c2.button("🗑️", key=f"del_at_{i}"):
                     st.session_state.lanche_atual["extras"].pop(i)
                     st.rerun()
-            
-            st.markdown(f"**Total Lanche {st.session_state.id_atual}: R$ {sub_parcial:.2f}**")
-            
+            st.markdown(f"**Total Parcial: R$ {sub_parcial:.2f}**")
             if st.button(f"🔒 FINALIZAR LANCHE {st.session_state.id_atual}", use_container_width=True):
                 st.session_state.lanches_fechados.append(st.session_state.lanche_atual.copy())
-                st.session_state.lanche_atual = {"n": None, "p": 0.0, "ing": "", "extras": []}
-                st.session_state.id_atual += 1
-                st.rerun()
-        else:
-            st.warning("Escolha um lanche na aba ao lado.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# RODAPÉ TOTAL
-total_p = sum([l['p'] + sum(e['p'] for e in l['extras']) for l in st.session_state.lanches_fechados])
-if st.session_state.lanche_atual['n']:
-    total_p += st.session_state.lanche_atual['p'] + sum(e['p'] for e in st.session_state.lanche_atual['extras'])
-st.markdown(f'<div class="footer-soma"><b>VALOR TOTAL: R$ {total_p:.2f}</b></div>', unsafe_allow_html=True)
+                st.session_state.lanche_atual = {"n": None, "p":
