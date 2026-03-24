@@ -4,49 +4,86 @@ import streamlit as st
 # 🛠️ PAINEL DE CONTROLE (AUTONOMIA TOTAL DO LEO)
 # =========================================================
 
-# 1. TÍTULOS DAS ABAS (Mude o texto entre aspas para mudar o nome da aba)
-NOME_ABA_1 = "Hambúrguer Simples"
-NOME_ABA_2 = "Hambúrguer de Frango"
-NOME_ABA_3 = "Hambúrguer de Lombo"
-NOME_ABA_4 = "Hambúrguer de Picanha"
-NOME_ABA_5 = "Filé de Frango"
+# 1. TÍTULOS DAS 5 ABAS (Mude o texto entre aspas)
+TITULO_ABA_1 = "Hambúrguer Simples"
+TITULO_ABA_2 = "Hambúrguer de Frango"
+TITULO_ABA_3 = "Hambúrguer de Lombo"
+TITULO_ABA_4 = "Hambúrguer de Picanha"
+TITULO_ABA_5 = "Filé de Frango"
 
-# 2. PREÇOS BASE (Altere o número para mudar o valor inicial de cada categoria)
-PRECO_BASE_CARNE = 10.00
-PRECO_BASE_FRANGO = 12.00
-PRECO_BASE_LOMBO = 14.00
-PRECO_BASE_PICANHA = 18.00
-PRECO_BASE_FILE = 15.00
-
-# 3. ADICIONAIS (Mude o nome ou o valor)
-ADICIONAIS = {
-    "Queijo": 3.00, "Presunto": 3.00, "Ovo": 3.00, 
-    "Bacon": 5.00, "Milho": 2.00, "Batata": 4.00, "Catupiry": 5.00
+# 2. CARDÁPIO DETALHADO (Mude nomes, preços e ingredientes aqui)
+# Basta alterar o que está entre aspas ou o número do preço.
+ITENS_CARDAPIO = {
+    TITULO_ABA_1: [
+        {"n": "Hambúrguer", "p": 10.00, "ing": "Pão, Carne, Alface e Tomate"},
+        {"n": "X-Burger", "p": 15.00, "ing": "Pão, Carne, Queijo, Alface e Tomate"},
+        {"n": "X-Egg", "p": 18.00, "ing": "Pão, Carne, Queijo, Ovo, Alface e Tomate"},
+        {"n": "X-Bacon", "p": 20.00, "ing": "Pão, Carne, Queijo, Bacon, Alface e Tomate"},
+        {"n": "X-Presunto", "p": 17.00, "ing": "Pão, Carne, Queijo, Presunto, Alface e Tomate"},
+        {"n": "X-Bacon Presunto", "p": 23.00, "ing": "Pão, Carne, Queijo, Bacon, Presunto, Alface e Tomate"},
+        {"n": "X-Egg Bacon Presunto", "p": 26.00, "ing": "Pão, Carne, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
+    ],
+    TITULO_ABA_2: [
+        {"n": "Hambúrguer Frango", "p": 12.00, "ing": "Pão, Frango, Alface e Tomate"},
+        {"n": "X-Burger Frango", "p": 17.00, "ing": "Pão, Frango, Queijo, Alface e Tomate"},
+        {"n": "X-Egg Frango", "p": 20.00, "ing": "Pão, Frango, Queijo, Ovo, Alface e Tomate"},
+        {"n": "X-Bacon Frango", "p": 22.00, "ing": "Pão, Frango, Queijo, Bacon, Alface e Tomate"},
+        {"n": "X-Presunto Frango", "p": 19.00, "ing": "Pão, Frango, Queijo, Presunto, Alface e Tomate"},
+        {"n": "X-Bacon Presunto Frango", "p": 25.00, "ing": "Pão, Frango, Queijo, Bacon, Presunto, Alface e Tomate"},
+        {"n": "X-Egg Bacon Presunto Frango", "p": 28.00, "ing": "Pão, Frango, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
+    ],
+    TITULO_ABA_3: [
+        {"n": "Hambúrguer Lombo", "p": 14.00, "ing": "Pão, Lombo, Alface e Tomate"},
+        {"n": "X-Burger Lombo", "p": 19.00, "ing": "Pão, Lombo, Queijo, Alface e Tomate"},
+        {"n": "X-Egg Lombo", "p": 22.00, "ing": "Pão, Lombo, Queijo, Ovo, Alface e Tomate"},
+        {"n": "X-Bacon Lombo", "p": 24.00, "ing": "Pão, Lombo, Queijo, Bacon, Alface e Tomate"},
+        {"n": "X-Presunto Lombo", "p": 21.00, "ing": "Pão, Lombo, Queijo, Presunto, Alface e Tomate"},
+        {"n": "X-Bacon Presunto Lombo", "p": 27.00, "ing": "Pão, Lombo, Queijo, Bacon, Presunto, Alface e Tomate"},
+        {"n": "X-Egg Bacon Presunto Lombo", "p": 30.00, "ing": "Pão, Lombo, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
+    ],
+    TITULO_ABA_4: [
+        {"n": "Hambúrguer Picanha", "p": 18.00, "ing": "Pão, Picanha, Alface e Tomate"},
+        {"n": "X-Burger Picanha", "p": 23.00, "ing": "Pão, Picanha, Queijo, Alface e Tomate"},
+        {"n": "X-Egg Picanha", "p": 26.00, "ing": "Pão, Picanha, Queijo, Ovo, Alface e Tomate"},
+        {"n": "X-Bacon Picanha", "p": 28.00, "ing": "Pão, Picanha, Queijo, Bacon, Alface e Tomate"},
+        {"n": "X-Presunto Picanha", "p": 25.00, "ing": "Pão, Picanha, Queijo, Presunto, Alface e Tomate"},
+        {"n": "X-Bacon Presunto Picanha", "p": 31.00, "ing": "Pão, Picanha, Queijo, Bacon, Presunto, Alface e Tomate"},
+        {"n": "X-Egg Bacon Presunto Picanha", "p": 34.00, "ing": "Pão, Picanha, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
+    ],
+    TITULO_ABA_5: [
+        {"n": "Filé de Frango", "p": 15.00, "ing": "Pão, Filé, Alface e Tomate"},
+        {"n": "X-Burger Filé", "p": 20.00, "ing": "Pão, Filé, Queijo, Alface e Tomate"},
+        {"n": "X-Egg Filé", "p": 23.00, "ing": "Pão, Filé, Queijo, Ovo, Alface e Tomate"},
+        {"n": "X-Bacon Filé", "p": 25.00, "ing": "Pão, Filé, Queijo, Bacon, Alface e Tomate"},
+        {"n": "X-Presunto Filé", "p": 22.00, "ing": "Pão, Filé, Queijo, Presunto, Alface e Tomate"},
+        {"n": "X-Bacon Presunto Filé", "p": 28.00, "ing": "Pão, Filé, Queijo, Bacon, Presunto, Alface e Tomate"},
+        {"n": "X-Egg Bacon Presunto Filé", "p": 31.00, "ing": "Pão, Filé, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
+    ]
 }
 
-# 4. BEBIDAS E DOCES
-BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
-DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
+# 3. ADICIONAIS, BEBIDAS E DOCES
+ADICIONAIS = {"Queijo": 3.0, "Presunto": 3.0, "Ovo": 3.0, "Bacon": 5.0, "Milho": 2.0, "Batata": 4.0}
+BEBIDAS = {"Lata": 5.0, "600ml": 8.0, "1 Litro": 10.0, "2 Litros": 15.0}
+DOCES = {"Brigadeiro": 4.0, "Beijinho": 4.0, "Doce Amendoim": 3.0}
 
-# 5. DADOS DO ALAN
-WHATSAPP_ALAN = "5511999999999" # Coloque o número dele aqui (DDI + DDD + Número)
+# 4. CONFIGURAÇÃO WHATSAPP
+WHATSAPP_NUMERO = "5511999999999"
 
 # =========================================================
-# ⚙️ LÓGICA DO SISTEMA (NÃO PRECISA MEXER ABAIXO)
+# ⚙️ MOTOR DO SITE (NÃO MEXER)
 # =========================================================
 
-st.set_page_config(page_title="Trailer do Alan", page_icon="🍔", layout="centered")
+st.set_page_config(page_title="Trailer do Alan", layout="centered")
 
-# Estilo Visual Azul
 st.markdown("""
     <style>
     .stApp { background-color: #F0F8FF; }
     .stButton>button { 
         background-color: #00b4d8; color: white; width: 100%; border-radius: 12px; 
-        min-height: 110px; font-weight: bold; border: none; font-size: 14px; margin-bottom: 10px;
+        min-height: 110px; font-weight: bold; font-size: 14px; margin-bottom: 10px;
     }
     .footer-total { 
-        position: fixed; bottom: 0; left: 0; width: 100%; background-color: white; 
+        position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
         padding: 15px; text-align: center; border-top: 3px solid #00b4d8; z-index: 100;
     }
     </style>
@@ -57,79 +94,51 @@ st.markdown('<h1 style="text-align:center; color:#0077b6;">🍔 Trailer do Alan<
 if 'carrinho' not in st.session_state:
     st.session_state.carrinho = []
 
-def adicionar(nome, preco, ing):
-    st.session_state.carrinho.append({"item": nome, "preco": preco, "ing": ing})
-    st.toast(f"✅ {nome} adicionado!")
+def add(n, p, i):
+    st.session_state.carrinho.append({"item": n, "preco": p, "ing": i})
+    st.toast(f"✅ {n} adicionado!")
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
+tabs = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
 
-with tab1:
-    # Lista com as 5 categorias e seus respectivos preços base e nomes das abas
-    categorias = [
-        {"nome": NOME_ABA_1, "tipo": "Carne", "pb": PRECO_BASE_CARNE},
-        {"nome": NOME_ABA_2, "tipo": "Frango", "pb": PRECO_BASE_FRANGO},
-        {"nome": NOME_ABA_3, "tipo": "Lombo", "pb": PRECO_BASE_LOMBO},
-        {"nome": NOME_ABA_4, "tipo": "Picanha", "pb": PRECO_BASE_PICANHA},
-        {"nome": NOME_ABA_5, "tipo": "Filé de Frango", "pb": PRECO_BASE_FILE},
-    ]
+with tabs[0]:
+    for titulo, lanches in ITENS_CARDAPIO.items():
+        with st.expander(f"✨ Opções de {titulo}"):
+            c1, c2 = st.columns(2)
+            for idx, l in enumerate(lanches):
+                col = c1 if idx % 2 == 0 else c2
+                if col.button(f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})", key=f"{titulo}_{idx}"):
+                    add(l['n'], l['p'], l['ing'])
 
-    for cat in categorias:
-        with st.expander(f"✨ Opções de {cat['nome']}"):
-            tipo = cat['tipo']
-            pb = cat['pb']
-            col1, col2 = st.columns(2)
-            
-            # Aqui estão as 7 variações padrão que você pediu
-            opcoes = [
-                {"n": f"{tipo}", "p": pb, "ing": f"Pão, {tipo}, Alface e Tomate"},
-                {"n": f"X-Burger {tipo}", "p": pb+5, "ing": f"Pão, {tipo}, Queijo, Alface e Tomate"},
-                {"n": f"X-Egg {tipo}", "p": pb+8, "ing": f"Pão, {tipo}, Queijo, Ovo, Alface e Tomate"},
-                {"n": f"X-Bacon {tipo}", "p": pb+10, "ing": f"Pão, {tipo}, Queijo, Bacon, Alface e Tomate"},
-                {"n": f"X-Presunto {tipo}", "p": pb+7, "ing": f"Pão, {tipo}, Queijo, Presunto, Alface e Tomate"},
-                {"n": f"X-Bacon Presunto {tipo}", "p": pb+13, "ing": f"Pão, {tipo}, Queijo, Bacon, Presunto, Alface e Tomate"},
-                {"n": f"X-Egg Bacon Presunto {tipo}", "p": pb+16, "ing": f"Pão, {tipo}, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
-            ]
-
-            for i, l in enumerate(opcoes):
-                col_target = col1 if i % 2 == 0 else col2
-                btn_label = f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})"
-                if col_target.button(btn_label, key=f"btn_{l['n']}_{cat['nome']}"):
-                    adicionar(l['n'], l['p'], l['ing'])
-
-with tab2:
-    cols = st.columns(2)
+with tabs[1]:
+    c1, c2 = st.columns(2)
     for i, (item, preco) in enumerate(ADICIONAIS.items()):
-        if cols[i % 2].button(f"{item}\n+ R$ {preco:.2f}"):
-            adicionar(f"Adicional {item}", preco, "Extra")
+        col = c1 if i % 2 == 0 else c2
+        if col.button(f"{item}\n+ R$ {preco:.2f}"):
+            add(f"Extra {item}", preco, "Adicional")
 
-with tab3:
+with tabs[2]:
     for item, preco in BEBIDAS.items():
-        if st.button(f"🥤 {item}\nR$ {preco:.2f}"):
-            adicionar(item, preco, "")
+        if st.button(f"🥤 {item} - R$ {preco:.2f}"):
+            add(item, preco, "Bebida")
 
-with tab4:
+with tabs[3]:
     for item, preco in DOCES.items():
-        if st.button(f"🍰 {item}\nR$ {preco:.2f}"):
-            adicionar(item, preco, "")
+        if st.button(f"🍰 {item} - R$ {preco:.2f}"):
+            add(item, preco, "Doce")
 
-with tab5:
-    nome = st.text_input("Seu Nome:")
-    end = st.text_input("Endereço Completo:")
-    tel = st.text_input("Telefone de Contato:")
-    comp = st.text_input("Complemento (Apto, Bloco, Referência):")
-    obs = st.text_area("Observações (Ex: Sem cebola, ponto da carne):")
-
-    total_final = sum(item['preco'] for item in st.session_state.carrinho)
+with tabs[4]:
+    n_cli = st.text_input("Nome:")
+    e_cli = st.text_input("Endereço:")
+    t_cli = st.text_input("Telefone:")
+    o_cli = st.text_area("Observações:")
+    total = sum(i['preco'] for i in st.session_state.carrinho)
     
-    if st.button("🟢 ENVIAR PEDIDO PARA O WHATSAPP"):
-        if nome and end and st.session_state.carrinho:
-            itens_lista = "\n".join([f"* {i['item']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
-            mensagem = f"*PEDIDO - TRAILER DO ALAN*\n\n*Cliente:* {nome}\n*Endereço:* {end}\n*Complemento:* {comp}\n*Telefone:* {tel}\n\n*ITENS:*\n{itens_lista}\n\n*OBS:* {obs}\n\n*TOTAL: R$ {total_final:.2f}*"
-            link_wa = f"https://wa.me/{WHATSAPP_ALAN}?text={mensagem.replace(' ', '%20').replace('\n', '%0A')}"
-            st.link_button("Confirmar e Abrir WhatsApp ✅", link_wa)
-        else:
-            st.error("Por favor, preencha o Nome, Endereço e escolha pelo menos um item!")
+    if st.button("🟢 ENVIAR PEDIDO"):
+        if n_cli and e_cli and st.session_state.carrinho:
+            txt = f"*PEDIDO*\n*Cliente:* {n_cli}\n*End:* {e_cli}\n*Tel:* {t_cli}\n\n*ITENS:*\n"
+            txt += "\n".join([f"- {i['item']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
+            txt += f"\n\n*OBS:* {o_cli}\n*TOTAL: R$ {total:.2f}*"
+            st.link_button("Abrir WhatsApp ✅", f"https://wa.me/{WHATSAPP_NUMERO}?text={txt.replace(' ', '%20').replace('\n', '%0A')}")
 
-# Rodapé com a soma total sempre visível
 if st.session_state.carrinho:
-    st.markdown(f'<div class="footer-total"><b>🛒 Total do Pedido: R$ {sum(item["preco"] for item in st.session_state.carrinho):.2f}</b></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="footer-total"><b>🛒 Total: R$ {sum(i["preco"] for i in st.session_state.carrinho):.2f}</b></div>', unsafe_allow_html=True)
