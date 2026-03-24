@@ -66,7 +66,7 @@ CORTESIAS = {"Milho": 0.00, "Batata Palha": 0.00}
 BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
 
 DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
-WHATSAPP_ALAN = "5511999999999"
+WHATSAPP_ALAN = "5571992363322"
 
 # =========================================================
 # ⚙️ LÓGICA DO SISTEMA
