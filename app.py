@@ -30,7 +30,7 @@ ITENS_CARDAPIO = {
         {"n": "X-Bacon Lombo", "p": 24.00, "ing": "Pão, Lombo, Queijo, Bacon, Alface e Tomate"},
         {"n": "X-Presunto Lombo", "p": 21.00, "ing": "Pão, Lombo, Queijo, Presunto, Alface e Tomate"},
         {"n": "X-Bacon Presunto Lombo", "p": 27.00, "ing": "Pão, Lombo, Queijo, Bacon, Presunto, Alface e Tomate"},
-        {"n": "X-Egg Bacon Presunto Lombo", "p": 30.00, "ing": "Pão, Lombo, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
+        {"n": "X-Egg Bacon Presunto Lombo", "p": 30.00, "ing": "Persoalizado Lombo: Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
     ],
     "Hambúrguer de Picanha": [
         {"n": "Hambúrguer Picanha", "p": 18.00, "ing": "Pão, Picanha, Alface e Tomate"},
@@ -59,8 +59,10 @@ ITENS_CARDAPIO = {
     ]
 }
 
-ADICIONAIS = {"Bife de Hambúrguer": 5.00, "Bife de Frango": 5.00, "Bife de Picanha": 8.00, "Bife de Lombo": 6.00, "Filé de Frango": 6.00, "Queijo": 3.00, "Presunto": 3.00, "Ovo": 3.00, "Bacon": 5.00, "Catupiry": 5.00}
+# SEPARAÇÃO DOS ADICIONAIS
+ADICIONAIS_PAGOS = {"Bife de Hambúrguer": 5.00, "Bife de Frango": 5.00, "Bife de Picanha": 8.00, "Bife de Lombo": 6.00, "Filé de Frango": 6.00, "Queijo": 3.00, "Presunto": 3.00, "Ovo": 3.00, "Bacon": 5.00, "Catupiry": 5.00}
 CORTESIAS = {"Milho": 0.00, "Batata Palha": 0.00}
+
 BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
 DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
 WHATSAPP_ALAN = "5511999999999"
@@ -99,12 +101,20 @@ with col_menu:
                             st.rerun()
 
         with tabs[1]:
-            st.write("### ➕ Adicionais e Cortesias")
+            st.write("### ➕ Adicionais (Cobrados)")
             c1, c2 = st.columns(2)
-            todos_extras = {**ADICIONAIS, **CORTESIAS}
-            for i, (n, p) in enumerate(todos_extras.items()):
+            for i, (n, p) in enumerate(ADICIONAIS_PAGOS.items()):
                 col = c1 if i % 2 == 0 else c2
-                if col.button(f"{n} (+R$ {p:.2f})", key=f"ex_{i}"):
+                if col.button(f"{n} (+R$ {p:.2f})", key=f"pago_{i}"):
+                    st.session_state.lanche_atual["extras"].append({"n": n, "p": p})
+                    st.rerun()
+            
+            st.markdown("---")
+            st.write("### 🍟 Cortesias (Grátis)")
+            c3, c4 = st.columns(2)
+            for i, (n, p) in enumerate(CORTESIAS.items()):
+                col = c3 if i % 2 == 0 else c4
+                if col.button(f"{n} (R$ {p:.2f})", key=f"free_{i}"):
                     st.session_state.lanche_atual["extras"].append({"n": n, "p": p})
                     st.rerun()
 
