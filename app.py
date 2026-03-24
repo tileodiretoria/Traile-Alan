@@ -4,14 +4,12 @@ import streamlit as st
 # 🛠️ PAINEL DE CONTROLE (AUTONOMIA TOTAL DO LEO)
 # =========================================================
 
-# 1. TÍTULOS DAS 5 ABAS
 TITULO_ABA_1 = "Hambúrguer Simples"
 TITULO_ABA_2 = "Hambúrguer de Frango"
 TITULO_ABA_3 = "Hambúrguer de Lombo"
 TITULO_ABA_4 = "Hambúrguer de Picanha"
 TITULO_ABA_5 = "Filé de Frango"
 
-# 2. CARDÁPIO DETALHADO (7 Lanches por Aba)
 ITENS_CARDAPIO = {
     TITULO_ABA_1: [
         {"n": "Hambúrguer", "p": 10.00, "ing": "Pão, Carne, Alface e Tomate"},
@@ -60,8 +58,7 @@ ITENS_CARDAPIO = {
     ]
 }
 
-# 3. ADICIONAIS PAGOS (Incluindo os Bifes que você pediu)
-# Aqui você muda o nome ou o valor do que é cobrado
+# 3. ADICIONAIS PAGOS (Removida a Batata daqui)
 ADICIONAIS_PAGOS = {
     "Bife de Hambúrguer": 5.00,
     "Bife de Frango": 5.00,
@@ -72,36 +69,34 @@ ADICIONAIS_PAGOS = {
     "Presunto": 3.00, 
     "Ovo": 3.00, 
     "Bacon": 5.00, 
-    "Batata": 4.00, 
     "Catupiry": 5.00
 }
 
 # 4. CORTESIAS (Valor 0.00)
-# Itens que o cliente pode adicionar sem custo
 CORTESIAS = {
     "Milho": 0.00,
     "Batata Palha": 0.00
 }
 
-# 5. BEBIDAS E DOCES
 BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
 DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
-
-# 6. CONTATO WHATSAPP
 WHATSAPP_ALAN = "5511999999999"
 
 # =========================================================
-# ⚙️ MOTOR DO SITE (LÓGICA E SOMA)
+# ⚙️ MOTOR DO SITE
 # =========================================================
 
 st.set_page_config(page_title="Trailer do Alan", layout="centered")
 
+# Estilo Visual e Padronização dos Botões
 st.markdown("""
     <style>
     .stApp { background-color: #F0F8FF; }
+    /* Padronização dos botões para serem quadrados e iguais */
     .stButton>button { 
-        background-color: #00b4d8; color: white; width: 100%; border-radius: 12px; 
-        min-height: 110px; font-weight: bold; font-size: 14px; margin-bottom: 10px;
+        background-color: #0077b6; color: white; width: 100%; border-radius: 12px; 
+        min-height: 120px; font-weight: bold; font-size: 14px; margin-bottom: 10px;
+        display: flex; align-items: center; justify-content: center;
     }
     .footer-soma { 
         position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
@@ -122,7 +117,6 @@ def adicionar_ao_pedido(nome, preco, ingredientes):
 
 tabs = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
 
-# --- ABA DE LANCHES ---
 with tabs[0]:
     for titulo, lanches in ITENS_CARDAPIO.items():
         with st.expander(f"✨ Opções de {titulo}"):
@@ -132,13 +126,13 @@ with tabs[0]:
                 if coluna.button(f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})", key=f"btn_{titulo}_{i}"):
                     adicionar_ao_pedido(l['n'], l['p'], l['ing'])
 
-# --- ABA DE ADICIONAIS (PAGOS E CORTESIAS) ---
 with tabs[1]:
     st.write("### ➕ Extras (Cobrados)")
     c1, c2 = st.columns(2)
     for i, (nome, preco) in enumerate(ADICIONAIS_PAGOS.items()):
         coluna = c1 if i % 2 == 0 else c2
-        if coluna.button(f"{nome}\n+ R$ {preco:.2f}"):
+        # O botão agora tem um tamanho padrão garantido pelo CSS
+        if coluna.button(f"{nome}\n+ R$ {preco:.2f}", key=f"extra_{i}"):
             adicionar_ao_pedido(f"Adicional {nome}", preco, "Extra")
     
     st.write("---")
@@ -146,10 +140,9 @@ with tabs[1]:
     col_cortesia1, col_cortesia2 = st.columns(2)
     for i, (nome, preco) in enumerate(CORTESIAS.items()):
         coluna = col_cortesia1 if i % 2 == 0 else col_cortesia2
-        if coluna.button(f"{nome}\nGRÁTIS"):
+        if coluna.button(f"{nome}\nGRÁTIS", key=f"cortesia_{i}"):
             adicionar_ao_pedido(f"Cortesia {nome}", 0.00, "Grátis")
 
-# --- ABA DE BEBIDAS E DOCES ---
 with tabs[2]:
     for nome, preco in BEBIDAS.items():
         if st.button(f"🥤 {nome} - R$ {preco:.2f}"):
@@ -160,39 +153,14 @@ with tabs[3]:
         if st.button(f"🍰 {nome} - R$ {preco:.2f}"):
             adicionar_ao_pedido(nome, preco, "")
 
-# --- ABA FINALIZAR ---
 with tabs[4]:
     nome_usuario = st.text_input("Seu Nome:")
     end_usuario = st.text_input("Endereço Completo:")
     tel_usuario = st.text_input("Telefone:")
-    obs_usuario = st.text_area("Observações (Ex: Sem cebola, ponto da carne):")
+    obs_usuario = st.text_area("Observações:")
     
-    # Soma total detalhada no código para sua autonomia
     valor_total = sum(item['preco'] for item in st.session_state.carrinho)
     
     if st.button("🟢 CONCLUIR E ENVIAR WHATSAPP"):
         if nome_usuario and end_usuario and st.session_state.carrinho:
-            txt_pedido = "\n".join([f"- {i['item']} (R$ {i['preco']:.2f})" for i in st.session_state.carrinho])
-            
-            mensagem_final = (
-                f"*PEDIDO - TRAILER DO ALAN*\n"
-                f"*Cliente:* {nome_usuario}\n"
-                f"*Endereço:* {end_usuario}\n"
-                f"*Telefone:* {tel_usuario}\n\n"
-                f"*ITENS:*\n{txt_pedido}\n\n"
-                f"*OBS:* {obs_usuario}\n"
-                f"*TOTAL: R$ {valor_total:.2f}*"
-            )
-            link = f"https://wa.me/{WHATSAPP_ALAN}?text={mensagem_final.replace(' ', '%20').replace('\n', '%0A')}"
-            st.link_button("Ir para o WhatsApp ✅", link)
-        else:
-            st.warning("Preencha seu nome, endereço e adicione itens ao carrinho!")
-
-# --- BARRA DE SOMA AUTOMÁTICA (RODAPÉ) ---
-if st.session_state.carrinho:
-    total_rodape = sum(item['preco'] for item in st.session_state.carrinho)
-    st.markdown(f'''
-        <div class="footer-soma">
-            <b>🛒 Valor Total do Pedido: R$ {total_rodape:.2f}</b>
-        </div>
-    ''', unsafe_allow_html=True)
+            txt_pedido = "\n".join([f
