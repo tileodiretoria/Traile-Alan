@@ -97,36 +97,39 @@ st.markdown("""
 
 st.markdown('<h1 style="text-align:center; color:#0077b6;">🍔 Trailer do Alan</h1>', unsafe_allow_html=True)
 
-if 'carrinho' not in st.session_state:
-    st.session_state.carrinho = []
-
-# Nova função com suporte a número de pedido
-def adicionar_ao_pedido(nome, preco, ingredientes, num_pedido):
-    st.session_state.carrinho.append({"item": nome, "preco": preco, "ing": ingredientes, "p_n": num_pedido})
-    st.toast(f"✅ Adicionado ao {num_pedido}: {nome}")
+# Inicializa o dicionário de pedidos (1 a 10)
+if 'pedidos_dict' not in st.session_state:
+    st.session_state.pedidos_dict = {f"Lanche {i}": {"lanche": None, "adicionais": []} for i in range(1, 11)}
+if 'bebidas_doces' not in st.session_state:
+    st.session_state.bebidas_doces = []
 
 tabs = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
 
-# ABA LANCHES (Com Seletor)
+LISTA_LANCHES_NOMES = [f"Lanche {i}" for i in range(1, 11)]
+
+# ABA LANCHES
 with tabs[0]:
-    escolha_p = st.selectbox("📝 Montar qual lanche agora?", ["Lanche 1", "Lanche 2", "Lanche 3", "Lanche 4"], key="sel_lanche")
+    escolha_p = st.selectbox("📝 Montar qual lanche agora?", LISTA_LANCHES_NOMES, key="sel_lanche")
     for titulo, lanches in ITENS_CARDAPIO.items():
         with st.expander(f"✨ Opções de {titulo}"):
             c1, c2 = st.columns(2)
             for i, l in enumerate(lanches):
                 coluna = c1 if i % 2 == 0 else c2
                 if coluna.button(f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})", key=f"btn_{titulo}_{i}"):
-                    adicionar_ao_pedido(l['n'], l['p'], l['ing'], escolha_p)
+                    # LÓGICA DE SUBSTITUIÇÃO: Só permite um lanche por vaga
+                    st.session_state.pedidos_dict[escolha_p]["lanche"] = {"n": l['n'], "p": l['p']}
+                    st.toast(f"✅ {escolha_p} definido como: {l['n']}")
 
-# ABA ADICIONAIS (Com Seletor)
+# ABA ADICIONAIS
 with tabs[1]:
-    escolha_add = st.selectbox("➕ Adicionar extras em qual lanche?", ["Lanche 1", "Lanche 2", "Lanche 3", "Lanche 4"], key="sel_add")
+    escolha_add = st.selectbox("➕ Adicionar extras em qual lanche?", LISTA_LANCHES_NOMES, key="sel_add")
     st.write("### ➕ Extras (Cobrados)")
     c1, c2 = st.columns(2)
     for i, (nome, preco) in enumerate(ADICIONAIS_PAGOS.items()):
         coluna = c1 if i % 2 == 0 else c2
         if coluna.button(f"{nome}\n+ R$ {preco:.2f}", key=f"extra_pago_{i}"):
-            adicionar_ao_pedido(f"Adicional {nome}", preco, "Extra", escolha_add)
+            st.session_state.pedidos_dict[escolha_add]["adicionais"].append({"n": f"Add {nome}", "p": preco})
+            st.toast(f"➕ Adicionado ao {escolha_add}: {nome}")
     
     st.write("---")
     st.write("### 🎁 Cortesias (Grátis)")
@@ -134,43 +137,64 @@ with tabs[1]:
     for i, (nome, preco) in enumerate(CORTESIAS.items()):
         coluna = col1 if i % 2 == 0 else col2
         if coluna.button(f"{nome}\nGRÁTIS", key=f"cortesia_{i}"):
-            adicionar_ao_pedido(f"Cortesia {nome}", 0.00, "Grátis", escolha_add)
+            st.session_state.pedidos_dict[escolha_add]["adicionais"].append({"n": f"Cortesia {nome}", "p": 0.00})
+            st.toast(f"🎁 {nome} adicionado ao {escolha_add}")
 
-# ABAS BEBIDAS E DOCES (Mantidas idênticas)
+# ABAS BEBIDAS E DOCES
 with tabs[2]:
     for nome, preco in BEBIDAS.items():
         if st.button(f"🥤 {nome} - R$ {preco:.2f}", key=f"bebida_{nome}"):
-            adicionar_ao_pedido(f"Bebida {nome}", preco, "", "Geral")
+            st.session_state.bebidas_doces.append({"n": f"Bebida {nome}", "p": preco})
+            st.toast(f"🥤 {nome} adicionada!")
 
 with tabs[3]:
     for nome, preco in DOCES.items():
         if st.button(f"🍰 {nome} - R$ {preco:.2f}", key=f"doce_{nome}"):
-            adicionar_ao_pedido(nome, preco, "", "Geral")
+            st.session_state.bebidas_doces.append({"n": nome, "p": preco})
+            st.toast(f"🍰 {nome} adicionado!")
 
-# ABA FINALIZAR (Com Agrupamento para o Alan)
+# ABA FINALIZAR
 with tabs[4]:
+    st.write("### 🧾 Resumo do Pedido")
+    total_geral = 0.0
+    resumo_texto = ""
+
+    # Percorre Lanche 1 a 10
+    for l_nome in LISTA_LANCHES_NOMES:
+        dados = st.session_state.pedidos_dict[l_nome]
+        if dados["lanche"]: # Só mostra se o lanche principal foi escolhido
+            st.markdown(f"**📍 {l_nome}: {dados['lanche']['n']}** (R$ {dados['lanche']['p']:.2f})")
+            total_geral += dados['lanche']['p']
+            resumo_texto += f"\n*{l_nome}: {dados['lanche']['n']}*"
+            
+            for add in dados["adicionais"]:
+                st.write(f"   + {add['n']} (R$ {add['p']:.2f})")
+                total_geral += add['p']
+                resumo_texto += f"\n  - {add['n']} (R$ {add['p']:.2f})"
+            st.write("---")
+
+    # Bebidas e Doces
+    if st.session_state.bebidas_doces:
+        st.markdown("**🥤 Outros Itens:**")
+        resumo_texto += "\n\n*OUTROS ITENS:*"
+        for item in st.session_state.bebidas_doces:
+            st.write(f"- {item['n']} (R$ {item['p']:.2f})")
+            total_geral += item['p']
+            resumo_texto += f"\n- {item['n']} (R$ {item['p']:.2f})"
+    
     nome_u = st.text_input("Seu Nome:")
     end_u = st.text_input("Endereço Completo:")
     tel_u = st.text_input("Telefone:")
     obs_u = st.text_area("Observações:")
     
-    valor_t = sum(item['preco'] for item in st.session_state.carrinho)
-    
     if st.button("🟢 CONCLUIR E ENVIAR WHATSAPP"):
-        if nome_u and end_u and st.session_state.carrinho:
-            resumo_total = ""
-            pedidos_lista = sorted(list(set(i['p_n'] for i in st.session_state.carrinho)))
-            for p in pedidos_lista:
-                resumo_total += f"\n*{p}:*"
-                for item in [i for i in st.session_state.carrinho if i['p_n'] == p]:
-                    resumo_total += f"\n- {item['item']} (R$ {item['preco']:.2f})"
-            
-            msg = (f"*PEDIDO - TRAILER DO ALAN*\n*Cliente:* {nome_u}\n*Endereço:* {end_u}\n*Tel:* {tel_u}\n\n*ITENS:*{resumo_total}\n\n*OBS:* {obs_u}\n*TOTAL: R$ {valor_t:.2f}*")
+        if nome_u and end_u and total_geral > 0:
+            msg = (f"*PEDIDO - TRAILER DO ALAN*\n*Cliente:* {nome_u}\n*Endereço:* {end_u}\n*Tel:* {tel_u}\n\n*ITENS:*{resumo_texto}\n\n*OBS:* {obs_u}\n*TOTAL: R$ {total_geral:.2f}*")
             link = f"https://wa.me/{WHATSAPP_ALAN}?text={msg.replace(' ', '%20').replace('\n', '%0A')}"
             st.link_button("Ir para o WhatsApp ✅", link)
         else:
-            st.warning("Preencha os dados e escolha seus lanches!")
+            st.warning("Preencha os dados e escolha seus itens!")
 
-if st.session_state.carrinho:
-    total_r = sum(item['preco'] for item in st.session_state.carrinho)
-    st.markdown(f'<div class="footer-soma"><b>🛒 Valor Total: R$ {total_r:.2f}</b></div>', unsafe_allow_html=True)
+# Footer fixo com valor total
+if total_geral > 0:
+    st.markdown(f'<div class="footer-soma"><b>🛒 Total Geral: R$ {total_geral:.2f}</b></div>', unsafe_allow_html=True)
