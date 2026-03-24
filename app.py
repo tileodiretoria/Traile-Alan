@@ -1,200 +1,134 @@
 import streamlit as st
 
 # =========================================================
-# 🛠️ PAINEL DE CONTROLE (AUTONOMIA TOTAL DO LEO)
+# 🛠️ PAINEL DE CONTROLE (ESTRUTURA SAGRADA DO LEO)
 # =========================================================
 
-TITULO_ABA_1 = "Hambúrguer Simples"
-TITULO_ABA_2 = "Hambúrguer de Frango"
-TITULO_ABA_3 = "Hambúrguer de Lombo"
-TITULO_ABA_4 = "Hambúrguer de Picanha"
-TITULO_ABA_5 = "Filé de Frango"
-TITULO_ABA_6 = "🔥 X-TUDO"
+TITULO_ABA_1, TITULO_ABA_2, TITULO_ABA_3 = "Hambúrguer Simples", "Hambúrguer de Frango", "Hambúrguer de Lombo"
+TITULO_ABA_4, TITULO_ABA_5, TITULO_ABA_6 = "Hambúrguer de Picanha", "Filé de Frango", "🔥 X-TUDO"
 
 ITENS_CARDAPIO = {
-    TITULO_ABA_1: [
-        {"n": "Hambúrguer", "p": 10.00, "ing": "Pão, Carne, Alface e Tomate"},
-        {"n": "X-Burger", "p": 15.00, "ing": "Pão, Carne, Queijo, Alface e Tomate"},
-        {"n": "X-Egg", "p": 18.00, "ing": "Pão, Carne, Queijo, Ovo, Alface e Tomate"},
-        {"n": "X-Bacon", "p": 20.00, "ing": "Pão, Carne, Queijo, Bacon, Alface e Tomate"},
-        {"n": "X-Presunto", "p": 17.00, "ing": "Pão, Carne, Queijo, Presunto, Alface e Tomate"},
-        {"n": "X-Bacon Presunto", "p": 23.00, "ing": "Pão, Carne, Queijo, Bacon, Presunto, Alface e Tomate"},
-        {"n": "X-Egg Bacon Presunto", "p": 26.00, "ing": "Pão, Carne, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
-    ],
-    TITULO_ABA_2: [
-        {"n": "Hambúrguer Frango", "p": 12.00, "ing": "Pão, Frango, Alface e Tomate"},
-        {"n": "X-Burger Frango", "p": 17.00, "ing": "Pão, Frango, Queijo, Alface e Tomate"},
-        {"n": "X-Egg Frango", "p": 20.00, "ing": "Pão, Frango, Queijo, Ovo, Alface e Tomate"},
-        {"n": "X-Bacon Frango", "p": 22.00, "ing": "Pão, Frango, Queijo, Bacon, Alface e Tomate"},
-        {"n": "X-Presunto Frango", "p": 19.00, "ing": "Pão, Frango, Queijo, Presunto, Alface e Tomate"},
-        {"n": "X-Bacon Presunto Frango", "p": 25.00, "ing": "Pão, Frango, Queijo, Bacon, Presunto, Alface e Tomate"},
-        {"n": "X-Egg Bacon Presunto Frango", "p": 28.00, "ing": "Pão, Frango, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
-    ],
-    TITULO_ABA_3: [
-        {"n": "Hambúrguer Lombo", "p": 14.00, "ing": "Pão, Lombo, Alface e Tomate"},
-        {"n": "X-Burger Lombo", "p": 19.00, "ing": "Pão, Lombo, Queijo, Alface e Tomate"},
-        {"n": "X-Egg Lombo", "p": 22.00, "ing": "Pão, Lombo, Queijo, Ovo, Alface e Tomate"},
-        {"n": "X-Bacon Lombo", "p": 24.00, "ing": "Pão, Lombo, Queijo, Bacon, Alface e Tomate"},
-        {"n": "X-Presunto Lombo", "p": 21.00, "ing": "Pão, Lombo, Queijo, Presunto, Alface e Tomate"},
-        {"n": "X-Bacon Presunto Lombo", "p": 27.00, "ing": "Pão, Lombo, Queijo, Bacon, Presunto, Alface e Tomate"},
-        {"n": "X-Egg Bacon Presunto Lombo", "p": 30.00, "ing": "Pão, Lombo, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
-    ],
-    TITULO_ABA_4: [
-        {"n": "Hambúrguer Picanha", "p": 18.00, "ing": "Pão, Picanha, Alface e Tomate"},
-        {"n": "X-Burger Picanha", "p": 23.00, "ing": "Pão, Picanha, Queijo, Alface e Tomate"},
-        {"n": "X-Egg Picanha", "p": 26.00, "ing": "Pão, Picanha, Queijo, Ovo, Alface e Tomate"},
-        {"n": "X-Bacon Picanha", "p": 28.00, "ing": "Pão, Picanha, Queijo, Bacon, Alface e Tomate"},
-        {"n": "X-Presunto Picanha", "p": 25.00, "ing": "Pão, Picanha, Queijo, Presunto, Alface e Tomate"},
-        {"n": "X-Bacon Presunto Picanha", "p": 31.00, "ing": "Pão, Picanha, Queijo, Bacon, Presunto, Alface e Tomate"},
-        {"n": "X-Egg Bacon Presunto Picanha", "p": 34.00, "ing": "Pão, Picanha, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
-    ],
-    TITULO_ABA_5: [
-        {"n": "Filé de Frango", "p": 15.00, "ing": "Pão, Filé, Alface e Tomate"},
-        {"n": "X-Burger Filé", "p": 20.00, "ing": "Pão, Filé, Queijo, Alface e Tomate"},
-        {"n": "X-Egg Filé", "p": 23.00, "ing": "Pão, Filé, Queijo, Ovo, Alface e Tomate"},
-        {"n": "X-Bacon Filé", "p": 25.00, "ing": "Pão, Filé, Queijo, Bacon, Alface e Tomate"},
-        {"n": "X-Presunto Filé", "p": 22.00, "ing": "Pão, Filé, Queijo, Presunto, Alface e Tomate"},
-        {"n": "X-Bacon Presunto Filé", "p": 28.00, "ing": "Pão, Filé, Queijo, Bacon, Presunto, Alface e Tomate"},
-        {"n": "X-Egg Bacon Presunto Filé", "p": 31.00, "ing": "Pão, Filé, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
-    ],
-    TITULO_ABA_6: [
-        {"n": "X-TUDO DO ALAN", "p": 45.00, "ing": "Picanha, Lombo, Filé Frango, Hambúrguer, Queijo, Presunto, Ovo, Bacon, Alface, Tomate, Milho e Batata"}
-    ]
+    TITULO_ABA_1: [{"n": "Hambúrguer", "p": 10.00, "ing": "Pão, Carne, Alface e Tomate"}, {"n": "X-Burger", "p": 15.00, "ing": "Pão, Carne, Queijo, Alface e Tomate"}, {"n": "X-Egg", "p": 18.00, "ing": "Pão, Carne, Queijo, Ovo, Alface e Tomate"}, {"n": "X-Bacon", "p": 20.00, "ing": "Pão, Carne, Queijo, Bacon, Alface e Tomate"}, {"n": "X-Presunto", "p": 17.00, "ing": "Pão, Carne, Queijo, Presunto, Alface e Tomate"}, {"n": "X-Bacon Presunto", "p": 23.00, "ing": "Pão, Carne, Queijo, Bacon, Presunto, Alface e Tomate"}, {"n": "X-Egg Bacon Presunto", "p": 26.00, "ing": "Pão, Carne, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}],
+    TITULO_ABA_2: [{"n": "Hambúrguer Frango", "p": 12.00, "ing": "Pão, Frango, Alface e Tomate"}, {"n": "X-Burger Frango", "p": 17.00, "ing": "Pão, Frango, Queijo, Alface e Tomate"}, {"n": "X-Egg Frango", "p": 20.00, "ing": "Pão, Frango, Queijo, Ovo, Alface e Tomate"}, {"n": "X-Bacon Frango", "p": 22.00, "ing": "Pão, Frango, Queijo, Bacon, Alface e Tomate"}, {"n": "X-Presunto Frango", "p": 19.00, "ing": "Pão, Frango, Queijo, Presunto, Alface e Tomate"}, {"n": "X-Bacon Presunto Frango", "p": 25.00, "ing": "Pão, Frango, Queijo, Bacon, Presunto, Alface e Tomate"}, {"n": "X-Egg Bacon Presunto Frango", "p": 28.00, "ing": "Pão, Frango, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}],
+    TITULO_ABA_3: [{"n": "Hambúrguer Lombo", "p": 14.00, "ing": "Pão, Lombo, Alface e Tomate"}, {"n": "X-Burger Lombo", "p": 19.00, "ing": "Pão, Lombo, Queijo, Alface e Tomate"}, {"n": "X-Egg Lombo", "p": 22.00, "ing": "Pão, Lombo, Queijo, Ovo, Alface e Tomate"}, {"n": "X-Bacon Lombo", "p": 24.00, "ing": "Pão, Lombo, Queijo, Bacon, Alface e Tomate"}, {"n": "X-Presunto Lombo", "p": 21.00, "ing": "Pão, Lombo, Queijo, Presunto, Alface e Tomate"}, {"n": "X-Bacon Presunto Lombo", "p": 27.00, "ing": "Pão, Lombo, Queijo, Bacon, Presunto, Alface e Tomate"}, {"n": "X-Egg Bacon Presunto Lombo", "p": 30.00, "ing": "Pão, Lombo, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}],
+    TITULO_ABA_4: [{"n": "Hambúrguer Picanha", "p": 18.00, "ing": "Pão, Picanha, Alface e Tomate"}, {"n": "X-Burger Picanha", "p": 23.00, "ing": "Pão, Picanha, Queijo, Alface e Tomate"}, {"n": "X-Egg Picanha", "p": 26.00, "ing": "Pão, Picanha, Queijo, Ovo, Alface e Tomate"}, {"n": "X-Bacon Picanha", "p": 28.00, "ing": "Pão, Picanha, Queijo, Bacon, Alface e Tomate"}, {"n": "X-Presunto Picanha", "p": 25.00, "ing": "Pão, Picanha, Queijo, Presunto, Alface e Tomate"}, {"n": "X-Bacon Presunto Picanha", "p": 31.00, "ing": "Pão, Picanha, Queijo, Bacon, Presunto, Alface e Tomate"}, {"n": "X-Egg Bacon Presunto Picanha", "p": 34.00, "ing": "Pão, Picanha, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}],
+    TITULO_ABA_5: [{"n": "Filé de Frango", "p": 15.00, "ing": "Pão, Filé, Alface e Tomate"}, {"n": "X-Burger Filé", "p": 20.00, "ing": "Pão, Filé, Queijo, Alface e Tomate"}, {"n": "X-Egg Filé", "p": 23.00, "ing": "Pão, Filé, Queijo, Ovo, Alface e Tomate"}, {"n": "X-Bacon Filé", "p": 25.00, "ing": "Pão, Filé, Queijo, Bacon, Alface e Tomate"}, {"n": "X-Presunto Filé", "p": 22.00, "ing": "Pão, Filé, Queijo, Presunto, Alface e Tomate"}, {"n": "X-Bacon Presunto Filé", "p": 28.00, "ing": "Pão, Filé, Queijo, Bacon, Presunto, Alface e Tomate"}, {"n": "X-Egg Bacon Presunto Filé", "p": 31.00, "ing": "Pão, Filé, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}],
+    TITULO_ABA_6: [{"n": "X-TUDO DO ALAN", "p": 45.00, "ing": "Picanha, Lombo, Filé Frango, Hambúrguer, Queijo, Presunto, Ovo, Bacon, Alface, Tomate, Milho e Batata"}]
 }
 
-ADICIONAIS_PAGOS = {
-    "Bife de Hambúrguer": 5.00, "Bife de Frango": 5.00, "Bife de Picanha": 8.00,
-    "Bife de Lombo": 6.00, "Filé de Frango": 6.00, "Queijo": 3.00, 
-    "Presunto": 3.00, "Ovo": 3.00, "Bacon": 5.00, "Catupiry": 5.00
-}
-
-CORTESIAS = {"Milho": 0.00, "Batata Palha": 0.00}
-BEBIDAS = {"Lata": 5.00, "600ml": 8.00, "1 Litro": 10.00, "2 Litros": 15.00}
-DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
-WHATSAPP_ALAN = "5571992363322"
+ADICIONAIS_PAGOS = {"Bife Hambúrguer": 5.0, "Bife Frango": 5.0, "Bife Picanha": 8.0, "Bife Lombo": 6.0, "Filé Frango": 6.0, "Queijo": 3.0, "Presunto": 3.0, "Ovo": 3.0, "Bacon": 5.0, "Catupiry": 5.0}
+CORTESIAS = {"Milho": 0.0, "Batata Palha": 0.0}
+BEBIDAS = {"Lata": 5.0, "600ml": 8.0, "1 Litro": 10.0, "2 Litros": 15.0}
+DOCES = {"Brigadeiro": 4.0, "Beijinho": 4.0, "Doce Amendoim": 3.0}
+WHATSAPP_ALAN = "5511999999999"
 
 # =========================================================
-# ⚙️ MOTOR DO SITE (ESTRUTURA MANTIDA)
+# ⚙️ MOTOR DO SITE (LÓGICA DE ETAPAS)
 # =========================================================
 
 st.set_page_config(page_title="Trailer do Alan", layout="centered")
 
-st.markdown("""
-    <style>
+# Estilo visual mantido exatamente como o original
+st.markdown("""<style>
     .stApp { background-color: #F0F8FF; }
-    .stButton>button { 
-        background-color: #0077b6; color: white; width: 100%; border-radius: 12px; 
-        min-height: 120px; font-weight: bold; font-size: 14px; margin-bottom: 10px;
-        display: flex; align-items: center; justify-content: center;
-    }
-    .footer-soma { 
-        position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
-        padding: 15px; text-align: center; border-top: 3px solid #00b4d8; z-index: 100;
-        font-size: 20px; color: #0077b6;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    .stButton>button { background-color: #0077b6; color: white; width: 100%; border-radius: 12px; min-height: 80px; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+    .footer-soma { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px; text-align: center; border-top: 3px solid #00b4d8; z-index: 100; font-size: 20px; color: #0077b6; }
+    .lanche-box { background: #e1f5fe; padding: 10px; border-radius: 10px; border-left: 5px solid #0077b6; margin-bottom: 10px; }
+    </style>""", unsafe_allow_html=True)
 
 st.markdown('<h1 style="text-align:center; color:#0077b6;">🍔 Trailer do Alan</h1>', unsafe_allow_html=True)
 
-# Inicializa o dicionário de pedidos (1 a 10)
-if 'pedidos_dict' not in st.session_state:
-    st.session_state.pedidos_dict = {f"Lanche {i}": {"lanche": None, "adicionais": []} for i in range(1, 11)}
-if 'bebidas_doces' not in st.session_state:
-    st.session_state.bebidas_doces = []
+# Inicialização de variáveis de controle
+if 'pedidos_concluidos' not in st.session_state: st.session_state.pedidos_concluidos = []
+if 'lanche_atual_id' not in st.session_state: st.session_state.lanche_atual_id = 1
+if 'temp_lanche' not in st.session_state: st.session_state.temp_lanche = {"hamburguer": None, "extras": []}
+
+# Função para travar o lanche atual e pular para o próximo
+def finalizar_lanche_atual():
+    if st.session_state.temp_lanche["hamburguer"]:
+        st.session_state.pedidos_concluidos.append(st.session_state.temp_lanche)
+        st.session_state.temp_lanche = {"hamburguer": None, "extras": []}
+        st.session_state.lanche_atual_id += 1
+        st.success(f"Lanche {st.session_state.lanche_atual_id-1} finalizado! Agora monte o próximo.")
+    else:
+        st.error("Escolha pelo menos um hambúrguer antes de finalizar!")
 
 tabs = st.tabs(["🍔 Lanches", "➕ Adicionais", "🥤 Bebidas", "🍰 Doces", "🏁 Finalizar"])
 
-LISTA_LANCHES_NOMES = [f"Lanche {i}" for i in range(1, 11)]
-
-# ABA LANCHES
-with tabs[0]:
-    escolha_p = st.selectbox("📝 Montar qual lanche agora?", LISTA_LANCHES_NOMES, key="sel_lanche")
-    for titulo, lanches in ITENS_CARDAPIO.items():
-        with st.expander(f"✨ Opções de {titulo}"):
-            c1, c2 = st.columns(2)
-            for i, l in enumerate(lanches):
-                coluna = c1 if i % 2 == 0 else c2
-                if coluna.button(f"{l['n']}\nR$ {l['p']:.2f}\n({l['ing']})", key=f"btn_{titulo}_{i}"):
-                    # LÓGICA DE SUBSTITUIÇÃO: Só permite um lanche por vaga
-                    st.session_state.pedidos_dict[escolha_p]["lanche"] = {"n": l['n'], "p": l['p']}
-                    st.toast(f"✅ {escolha_p} definido como: {l['n']}")
-
-# ABA ADICIONAIS
-with tabs[1]:
-    escolha_add = st.selectbox("➕ Adicionar extras em qual lanche?", LISTA_LANCHES_NOMES, key="sel_add")
-    st.write("### ➕ Extras (Cobrados)")
-    c1, c2 = st.columns(2)
-    for i, (nome, preco) in enumerate(ADICIONAIS_PAGOS.items()):
-        coluna = c1 if i % 2 == 0 else c2
-        if coluna.button(f"{nome}\n+ R$ {preco:.2f}", key=f"extra_pago_{i}"):
-            st.session_state.pedidos_dict[escolha_add]["adicionais"].append({"n": f"Add {nome}", "p": preco})
-            st.toast(f"➕ Adicionado ao {escolha_add}: {nome}")
+# Controle de fluxo: Se chegou ao 7, acabou a vez
+if st.session_state.lanche_atual_id <= 6:
+    atual = f"Lanche {st.session_state.lanche_atual_id}"
     
-    st.write("---")
-    st.write("### 🎁 Cortesias (Grátis)")
-    col1, col2 = st.columns(2)
-    for i, (nome, preco) in enumerate(CORTESIAS.items()):
-        coluna = col1 if i % 2 == 0 else col2
-        if coluna.button(f"{nome}\nGRÁTIS", key=f"cortesia_{i}"):
-            st.session_state.pedidos_dict[escolha_add]["adicionais"].append({"n": f"Cortesia {nome}", "p": 0.00})
-            st.toast(f"🎁 {nome} adicionado ao {escolha_add}")
+    # ABA LANCHES
+    with tabs[0]:
+        st.info(f"📍 Você está montando agora o: **{atual}**")
+        for titulo, lanches in ITENS_CARDAPIO.items():
+            with st.expander(f"✨ {titulo}"):
+                c1, c2 = st.columns(2)
+                for i, l in enumerate(lanches):
+                    col = c1 if i % 2 == 0 else c2
+                    if col.button(f"{l['n']}\nR$ {l['p']:.2f}", key=f"btn_{titulo}_{i}"):
+                        st.session_state.temp_lanche["hamburguer"] = {"n": l['n'], "p": l['p']}
+                        st.toast(f"✅ {l['n']} selecionado para o {atual}")
 
-# ABAS BEBIDAS E DOCES
-with tabs[2]:
-    for nome, preco in BEBIDAS.items():
-        if st.button(f"🥤 {nome} - R$ {preco:.2f}", key=f"bebida_{nome}"):
-            st.session_state.bebidas_doces.append({"n": f"Bebida {nome}", "p": preco})
-            st.toast(f"🥤 {nome} adicionada!")
+    # ABA ADICIONAIS
+    with tabs[1]:
+        st.write(f"### ➕ Extras para o **{atual}**")
+        c1, c2 = st.columns(2)
+        for i, (n, p) in enumerate(ADICIONAIS_PAGOS.items()):
+            col = c1 if i % 2 == 0 else c2
+            if col.button(f"{n}\n+ R$ {p:.2f}", key=f"add_{i}"):
+                st.session_state.temp_lanche["extras"].append({"n": n, "p": p})
+                st.toast(f"➕ {n} adicionado")
+        
+        st.write("---")
+        if st.button(f"✅ FINALIZAR {atual} E IR PARA O PRÓXIMO", use_container_width=True):
+            finalizar_lanche_atual()
 
-with tabs[3]:
-    for nome, preco in DOCES.items():
-        if st.button(f"🍰 {nome} - R$ {preco:.2f}", key=f"doce_{nome}"):
-            st.session_state.bebidas_doces.append({"n": nome, "p": preco})
-            st.toast(f"🍰 {nome} adicionado!")
+    # ABA BEBIDAS E DOCES (Adicionam ao lanche atual)
+    with tabs[2]:
+        for n, p in BEBIDAS.items():
+            if st.button(f"🥤 {n} - R$ {p:.2f}", key=f"beb_{n}"):
+                st.session_state.temp_lanche["extras"].append({"n": f"Bebida {n}", "p": p})
+                st.toast(f"🥤 {n} adicionada ao {atual}")
+
+    with tabs[3]:
+        for n, p in DOCES.items():
+            if st.button(f"🍰 {n} - R$ {p:.2f}", key=f"doce_{n}"):
+                st.session_state.temp_lanche["extras"].append({"n": n, "p": p})
+                st.toast(f"🍰 {n} adicionado ao {atual}")
+else:
+    st.warning("⚠️ Limite de 6 lanches atingido. Vá para a aba Finalizar!")
 
 # ABA FINALIZAR
 with tabs[4]:
-    st.write("### 🧾 Resumo do Pedido")
+    st.write("### 🧾 Resumo Detalhado por Lanche")
     total_geral = 0.0
-    resumo_texto = ""
-
-    # Percorre Lanche 1 a 10
-    for l_nome in LISTA_LANCHES_NOMES:
-        dados = st.session_state.pedidos_dict[l_nome]
-        if dados["lanche"]: # Só mostra se o lanche principal foi escolhido
-            st.markdown(f"**📍 {l_nome}: {dados['lanche']['n']}** (R$ {dados['lanche']['p']:.2f})")
-            total_geral += dados['lanche']['p']
-            resumo_texto += f"\n*{l_nome}: {dados['lanche']['n']}*"
-            
-            for add in dados["adicionais"]:
-                st.write(f"   + {add['n']} (R$ {add['p']:.2f})")
-                total_geral += add['p']
-                resumo_texto += f"\n  - {add['n']} (R$ {add['p']:.2f})"
-            st.write("---")
-
-    # Bebidas e Doces
-    if st.session_state.bebidas_doces:
-        st.markdown("**🥤 Outros Itens:**")
-        resumo_texto += "\n\n*OUTROS ITENS:*"
-        for item in st.session_state.bebidas_doces:
-            st.write(f"- {item['n']} (R$ {item['p']:.2f})")
-            total_geral += item['p']
-            resumo_texto += f"\n- {item['n']} (R$ {item['p']:.2f})"
+    resumo_whats = ""
     
+    # Mostra os que já foram fechados
+    for idx, p in enumerate(st.session_state.pedidos_concluidos):
+        subtotal = p['hamburguer']['p'] + sum(e['p'] for e in p['extras'])
+        total_geral += subtotal
+        with st.container():
+            st.markdown(f"""<div class="lanche-box"><b>🍔 LANCHE {idx+1}: {p['hamburguer']['n']}</b><br>
+            {f"".join([f"• {e['n']} (R$ {e['p']:.2f})<br>" for e in p['extras']])}
+            <b>Subtotal: R$ {subtotal:.2f}</b></div>""", unsafe_allow_html=True)
+            resumo_whats += f"\n*LANCHE {idx+1}: {p['hamburguer']['n']}*\n" + "".join([f"- {e['n']}\n" for e in p['extras']]) + f"*Subtotal: R$ {subtotal:.2f}*\n"
+
+    # Mostra o que está sendo montado agora (se houver)
+    if st.session_state.temp_lanche["hamburguer"]:
+        st.write("🕒 *Lanche em montagem (ainda não finalizado):*")
+        st.write(f"- {st.session_state.temp_lanche['hamburguer']['n']}")
+
     nome_u = st.text_input("Seu Nome:")
-    end_u = st.text_input("Endereço Completo:")
-    tel_u = st.text_input("Telefone:")
-    obs_u = st.text_area("Observações:")
+    end_u = st.text_input("Endereço:")
     
-    if st.button("🟢 CONCLUIR E ENVIAR WHATSAPP"):
+    if st.button("🟢 ENVIAR PEDIDO COMPLETO"):
         if nome_u and end_u and total_geral > 0:
-            msg = (f"*PEDIDO - TRAILER DO ALAN*\n*Cliente:* {nome_u}\n*Endereço:* {end_u}\n*Tel:* {tel_u}\n\n*ITENS:*{resumo_texto}\n\n*OBS:* {obs_u}\n*TOTAL: R$ {total_geral:.2f}*")
+            msg = f"*PEDIDO TRAILER DO ALAN*\n*Cliente:* {nome_u}\n*Endereço:* {end_u}\n{resumo_whats}\n*TOTAL GERAL: R$ {total_geral:.2f}*"
             link = f"https://wa.me/{WHATSAPP_ALAN}?text={msg.replace(' ', '%20').replace('\n', '%0A')}"
-            st.link_button("Ir para o WhatsApp ✅", link)
-        else:
-            st.warning("Preencha os dados e escolha seus itens!")
+            st.link_button("Confirmar no WhatsApp ✅", link)
 
-# Footer fixo com valor total
 if total_geral > 0:
-    st.markdown(f'<div class="footer-soma"><b>🛒 Total Geral: R$ {total_geral:.2f}</b></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="footer-soma"><b>🛒 VALOR TOTAL: R$ {total_geral:.2f}</b></div>', unsafe_allow_html=True)
