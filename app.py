@@ -58,7 +58,7 @@ ITENS_CARDAPIO = {
         {"n": "X-Egg Bacon Presunto Filé", "p": 31.00, "ing": "Pão, Filé, Queijo, Ovo, Bacon, Presunto, Alface e Tomate"}
     ],
     TITULO_ABA_6: [
-        {"n": "X-TUDO DO ALAN", "p": 45.00, "ing": "4 Bifes, Queijo, Presunto, Ovo, Bacon, Alface, Tomate, Milho e Batata"}
+        {"n": "X-TUDO", "p": 45.00, "ing": "Hamburguer de Picanha, Lombo, Filé Frango, Hambúrguer Simples, Queijo, Presunto, Ovo, Bacon, Alface, Tomate, Milho e Batata"}
     ]
 }
 
@@ -85,7 +85,7 @@ DOCES = {"Brigadeiro": 4.00, "Beijinho": 4.00, "Doce Amendoim": 3.00}
 WHATSAPP_ALAN = "5511999999999"
 
 # =========================================================
-# ⚙️ MOTOR DO SITE (REVISADO E ESTÁVEL)
+# ⚙️ MOTOR DO SITE (ESTRUTURA MANTIDA)
 # =========================================================
 
 st.set_page_config(page_title="Trailer do Alan", layout="centered")
